@@ -1,0 +1,13 @@
+{
+  "name": "naviia",
+  "owner": {
+    "name": "Naviia"
+  },
+  "plugins": [
+    {
+      "name": "naviia-two-pager",
+      "source": "./plugins/naviia-two-pager",
+      "description": "Two-pager Naviia : profil d'entreprise PE avec rendu PDF identique au portail."
+    }
+  ]
+}

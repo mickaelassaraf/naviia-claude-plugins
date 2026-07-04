@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "naviia-two-pager": {
+      "type": "http",
+      "url": "https://naviia-qa-claude.fly.dev/mcp-app"
+    }
+  }
+}
