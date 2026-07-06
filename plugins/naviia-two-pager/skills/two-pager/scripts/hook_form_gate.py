@@ -77,6 +77,22 @@ def main() -> int:
         )
         return 2
 
+    if mode == "pretool-bash":
+        command = str((event.get("tool_input") or {}).get("command") or "")
+        # Checkpoints are the crash-recovery currency: deleting work*/ before a
+        # deliverable exists is only allowed via an explicit user request.
+        if re.search(r"\brm\b[^\n|;&]*\bwork(-im)?\b", command) and not state.get("delivered"):
+            print(
+                "Suppression des checkpoints refusée : le run n'a produit aucun "
+                "livrable — work/ et work-im/ sont la reprise après interruption. "
+                "Si l'utilisateur veut vraiment repartir de zéro, demande-lui de "
+                "confirmer explicitement (il peut aussi supprimer le dossier "
+                "lui-même).",
+                file=sys.stderr,
+            )
+            return 2
+        return 0
+
     if mode == "posttool":
         tool = str(event.get("tool_name") or "")
         if RENDER_TOOLS.search(tool):

@@ -87,6 +87,13 @@ def main(path_str):
                 for field in ("note_I", "note_P", "arguments_I", "arguments_P"):
                     if field not in item:
                         reasons.append(f"RiskOpp/{label}/{title}: champ manquant ({field})")
+                srcs = item.get("sources")
+                if not isinstance(srcs, list) or not any(
+                    isinstance(s, str) and s.strip() for s in srcs
+                ):
+                    reasons.append(
+                        f"RiskOpp/{label}/{title}: sources vides — chaque risque/opportunité doit citer au moins une source"
+                    )
 
     if section_key == "Management":
         managers = content.get("managers")
