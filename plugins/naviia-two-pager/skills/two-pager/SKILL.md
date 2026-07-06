@@ -59,6 +59,13 @@ Règles d'orchestration :
   ses prompts les `{{PLACEHOLDERS}}` restants par les sorties des étapes
   correspondantes (`{{MARKET_DEFINITION}}`, `{{MARKET_SUMMARY}}`,
   `{{LINKEDIN_PROFILES}}`, `{{COMPETITORS_LIST}}`, etc.).
+- **Choix du modèle des sous-agents** (vitesse sans perte de qualité) :
+  la **classification** mainstream/niche se fait avec un modèle intermédiaire
+  (Sonnet) — jamais le plus petit : une erreur change toute la variante. Les
+  étapes de **pure mise en forme** (`market-reports-format`, formatage des
+  profils LinkedIn) utilisent le modèle le plus rapide (Haiku). Toutes les
+  étapes de recherche et de rédaction gardent le modèle par défaut de la
+  session — ne jamais les downgrader.
 - **Recherche web** : autorisée uniquement pour les étapes `webSearch: true`.
   Respecte les consignes de sources des prompts (sources spécialisées type
   cfnews.net, lesechos.fr, capitalfinance ; jamais Wikipedia/Pappers quand le
