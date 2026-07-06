@@ -1,0 +1,16 @@
+{
+  "name": "naviia-two-pager-renderer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rendu PDF Naviia du two-pager — s'exécute localement dans l'espace de travail Cowork.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "4.3.2",
+    "pdf-lib": "1.17.1",
+    "react": "18.3.1",
+    "sharp": "^0.34.0"
+  }
+}

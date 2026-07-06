@@ -84,17 +84,23 @@ consécutifs → signale la section comme dégradée et continue.
 python3 scripts/assemble_payload.py work/sections/ work/web_payload.json
 ```
 
-Puis appelle `render_two_pager_pdf` avec :
+**Rendu LOCAL (par défaut)** — le moteur de rendu Naviia est embarqué dans le
+plugin (`renderer/`), le PDF est produit directement dans l'espace de travail :
 
-```json
-{
-  "doc": { "name": "<Société>", "sector": ["<secteur>"], "website": "<site>", "iso_code": "<langue>" },
-  "webPayload": <contenu de work/web_payload.json>
-}
+```bash
+cd <racine du plugin>/renderer && npm install --silent   # première fois uniquement
+node dist/render.mjs <chemin>/work/web_payload.json <chemin>/work/<Société>_two-pager.pdf \
+  --doc '{"name":"<Société>","sector":["<secteur>"],"website":"<site>","iso_code":"<langue>"}'
 ```
 
-Si le tool rejette (validation serveur), corrige les sections signalées et
-rappelle-le. En succès, il retourne l'URL de téléchargement du PDF.
+Le script imprime un JSON `{ok, out, sections}` — vérifie que les sections
+attendues sont à `true` et livre le fichier PDF produit.
+
+**Fallback serveur** — si `node`/`npm` sont indisponibles ou que l'installation
+échoue : appelle le tool `render_two_pager_pdf` avec
+`{ "doc": {...}, "webPayload": <contenu de work/web_payload.json> }` ; il
+retourne une URL de téléchargement. En cas de rejet (validation), corrige les
+sections signalées et réessaie.
 
 ## 6. Livraison
 

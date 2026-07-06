@@ -6,9 +6,11 @@ marché (mainstream/niche), recherche web, rédaction des sections en sous-agent
 watermark, logo, pagination).
 
 Les prompts métier ne sont pas dans ce plugin : ils sont servis à l'exécution
-par le connecteur MCP Naviia (`prepare_two_pager`). Le rendu PDF est fait par
-le serveur (`render_two_pager_pdf`). La génération elle-même est faite par le
-modèle de la conversation — facturée sur l'abonnement Claude de l'utilisateur.
+par le connecteur MCP Naviia (`prepare_two_pager`). Le **rendu PDF s'exécute
+localement** dans l'espace de travail Cowork (`renderer/` embarqué — drapeaux
+inclus, aucun service tiers), avec le tool serveur `render_two_pager_pdf` en
+secours. La génération elle-même est faite par le modèle de la conversation —
+facturée sur l'abonnement Claude de l'utilisateur. Rien à héberger côté client.
 
 ## Installation
 
