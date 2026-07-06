@@ -1,7 +1,7 @@
 {
   "name": "naviia-two-pager",
-  "version": "0.2.1",
-  "description": "Two-pager Naviia : profil d'entreprise PE complet (classification marché, recherche web, sections en sous-agents, PDF Naviia) via le connecteur MCP Naviia.",
+  "version": "0.3.0",
+  "description": "Skills Naviia : two-pager (profil d'entreprise PE, PDF Naviia) et analyse d'IM (sections en sous-agents depuis l'IM joint, DOCX Cambria) via le connecteur MCP Naviia.",
   "author": {
     "name": "Naviia"
   }

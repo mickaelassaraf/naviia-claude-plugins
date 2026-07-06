@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Hook PostToolUse : valide automatiquement toute section two-pager écrite.
+"""Hook PostToolUse : valide automatiquement toute section Naviia écrite.
 
-Reçoit l'événement JSON sur stdin (Claude Code / Cowork). Si le fichier écrit
-est une section (work/sections/<Clé>.json), lance validate_section.py dessus.
+Reçoit l'événement JSON sur stdin (Claude Code / Cowork). Route selon le
+chemin du fichier écrit :
+  - work/sections/<Clé>.json        -> validate_section.py (two-pager)
+  - work-im/sections/<slug>.json|md -> validate_im_section.py (analyse d'IM)
 Code de sortie 2 = bloque et renvoie les motifs au modèle, qui doit corriger.
 Pour tout autre fichier : sortie 0 silencieuse (le hook est global au run).
 """
@@ -18,10 +20,20 @@ except Exception:
     sys.exit(0)
 
 file_path = (event.get("tool_input") or {}).get("file_path") or ""
-if not re.search(r"work/sections/[^/]+\.json$", file_path.replace("\\", "/")):
+normalized = file_path.replace("\\", "/")
+
+if re.search(r"work/sections/[^/]+\.json$", normalized):
+    validator = Path(__file__).parent / "validate_section.py"
+elif re.search(r"work-im/sections/[^/]+\.(json|md)$", normalized):
+    validator = (
+        Path(__file__).resolve().parents[2]
+        / "im-analysis"
+        / "scripts"
+        / "validate_im_section.py"
+    )
+else:
     sys.exit(0)
 
-validator = Path(__file__).parent / "validate_section.py"
 proc = subprocess.run(
     [sys.executable, str(validator), file_path],
     capture_output=True,
