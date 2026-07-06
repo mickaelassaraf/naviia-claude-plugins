@@ -907,8 +907,8 @@ var valueToLines = (val) => {
     const lines = val.map((v) => v === null || v === void 0 ? "" : String(v)).map((v) => v.trim()).filter(Boolean);
     return lines.length ? lines : ["N/A"];
   }
-  const str = String(val);
-  const parts = str.split(/\n+/).map((v) => v.trim()).filter(Boolean);
+  const str2 = String(val);
+  const parts = str2.split(/\n+/).map((v) => v.trim()).filter(Boolean);
   return parts.length ? parts : ["N/A"];
 };
 var collectInpiSeries = (data) => {
@@ -5449,13 +5449,13 @@ var CompetitorsPdfDocument = ({
       ] }),
       rows.length ? rows.map((c, idx) => {
         const name = pickName(c);
-        const initials = name.split(/\s+/).map((p) => p[0]).filter(Boolean).join("").slice(0, 2).toUpperCase();
+        const initials2 = name.split(/\s+/).map((p) => p[0]).filter(Boolean).join("").slice(0, 2).toUpperCase();
         const logoSrc = c?.logoDataUrl || (typeof c?.logo === "string" && c.logo.trim() ? c.logo.trim() : null) || (typeof c?.logo_url === "string" && c.logo_url.trim() ? c.logo_url.trim() : null) || (typeof c?.logoUrl === "string" && c.logoUrl.trim() ? c.logoUrl.trim() : null);
         const flags = Array.isArray(c.countryFlags) ? c.countryFlags : [];
         const flagItems = flags.filter((f) => f.src);
         return /* @__PURE__ */ jsxs7(View8, { style: styles7.tableRow, wrap: false, children: [
           /* @__PURE__ */ jsxs7(View8, { style: [styles7.td, styles7.colActor, styles7.actorCell], children: [
-            logoSrc ? /* @__PURE__ */ jsx8(Image5, { src: logoSrc, style: styles7.logo }) : /* @__PURE__ */ jsx8(View8, { style: styles7.logoFallback, children: /* @__PURE__ */ jsx8(Text8, { style: styles7.logoInitials, children: initials || "\u2014" }) }),
+            logoSrc ? /* @__PURE__ */ jsx8(Image5, { src: logoSrc, style: styles7.logo }) : /* @__PURE__ */ jsx8(View8, { style: styles7.logoFallback, children: /* @__PURE__ */ jsx8(Text8, { style: styles7.logoInitials, children: initials2 || "\u2014" }) }),
             /* @__PURE__ */ jsx8(View8, { style: styles7.nameWrap, children: /* @__PURE__ */ jsx8(Text8, { style: styles7.name, children: renderInlineCitations6(name, citeCtx2) }) })
           ] }),
           /* @__PURE__ */ jsx8(Text8, { style: [styles7.td, styles7.colYear], children: renderInlineCitations6(pickYear(c), citeCtx2) }),
@@ -7722,21 +7722,1136 @@ async function renderTwoPagerPdf(input) {
   return { filename: result.filename, bytes: result.bytes, sectionStats };
 }
 
+// src/two-pager/html.ts
+var P = {
+  primary: "#4338CA",
+  primaryMuted: "#EEF2FF",
+  border: "#E5E7EB",
+  card: "#F8FAFC",
+  text: "#111827",
+  muted: "#6B7280",
+  barSecondary: "#BFD4F0",
+  red: "#B91C1C",
+  redBg: "#FEF2F2",
+  orange: "#C2410C",
+  orangeBg: "#FFF7ED",
+  green: "#15803D",
+  greenBg: "#F0FDF4"
+};
+var PIE_COLORS = ["#4338CA", "#6366F1", "#818CF8", "#A5B4FC", "#C7D2FE", "#E0E7FF"];
+var esc = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+var safeHref = (url) => {
+  if (typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  const candidate = /^www\./i.test(trimmed) ? `https://${trimmed}` : trimmed;
+  try {
+    const u = new URL(candidate);
+    if (!/^(https?|mailto):$/i.test(u.protocol)) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
+};
+var safeImgSrc = (src) => typeof src === "string" && src.startsWith("data:image/") && src.length > 600 ? src : null;
+var isNonEmptyString = (v) => typeof v === "string" && v.trim().length > 0;
+var asArray = (v) => Array.isArray(v) ? v : [];
+var str = (v) => v === null || v === void 0 ? "" : String(v);
+var linkOrText = (url, label) => {
+  const href = safeHref(url);
+  const text = label ?? str(url);
+  if (!href) return esc(text);
+  return `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+};
+var hostnameOf = (url) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+};
+var parseMaybeNumber2 = (v) => {
+  if (v === null || v === void 0) return null;
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  const raw = String(v).trim();
+  if (!raw || /^(n\.?d\.?|n\/a|na|—|-)$/i.test(raw)) return null;
+  let neg = false;
+  let s = raw;
+  if (s.startsWith("(") && s.includes(")")) {
+    neg = true;
+    s = s.replace(/[()]/g, "");
+  }
+  s = s.replace("%", "").replace(/[\s  ]/g, "").replace(",", ".").replace(/^\+/, "");
+  const n = Number.parseFloat(s);
+  if (!Number.isFinite(n)) return null;
+  return neg ? -n : n;
+};
+var frDecimal = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+var frInteger = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+var frCompact = new Intl.NumberFormat("fr-FR", {
+  notation: "compact",
+  maximumFractionDigits: 1
+});
+var fmtCompact = (n) => frCompact.format(n);
+var fmtInpiCell2 = (v, kind, label) => {
+  const n = parseMaybeNumber2(v);
+  if (n === null) {
+    const raw = str(v).trim();
+    return raw && !/^(n\.?d\.?|n\/a|na)$/i.test(raw) ? esc(raw) : "\u2014";
+  }
+  const abs = Math.abs(n);
+  let base;
+  if (kind === "\u20AC") base = `${frInteger.format(abs)}\xA0\u20AC`;
+  else if (kind === "%") base = `${frDecimal.format(abs)}\xA0%`;
+  else base = frDecimal.format(abs);
+  if (n < 0) return `(${base})`;
+  const showPlus = label ? /(croissance|cagr)/i.test(label) : false;
+  return `${showPlus ? "+" : ""}${base}`;
+};
+var createCiteCtx10 = () => ({ map: /* @__PURE__ */ new Map(), next: 1 });
+var citeNumber11 = (ctx, url) => {
+  const u = url.trim();
+  const found = ctx.map.get(u);
+  if (found) return found;
+  const n = ctx.next++;
+  ctx.map.set(u, n);
+  return n;
+};
+var MD_LINK = /\[([^\]]+)\]\(((?:https?:\/\/|www\.|mailto:)[^\s)]+)\)/g;
+var BARE_URL = /(?:https?:\/\/|www\.)[^\s)\]"<>]+/g;
+var renderInline = (raw, cites) => {
+  const text = str(raw);
+  const parts = [];
+  let last = 0;
+  MD_LINK.lastIndex = 0;
+  let m;
+  const pushPlain = (segment) => {
+    let out = "";
+    let idx = 0;
+    BARE_URL.lastIndex = 0;
+    let mm;
+    while (mm = BARE_URL.exec(segment)) {
+      out += esc(segment.slice(idx, mm.index));
+      const href = safeHref(mm[0]);
+      if (href) {
+        const n = citeNumber11(cites, href);
+        out += `<a class="cite" href="${esc(href)}" target="_blank" rel="noopener">[${n}]</a>`;
+      } else {
+        out += esc(mm[0]);
+      }
+      idx = mm.index + mm[0].length;
+    }
+    out += esc(segment.slice(idx));
+    parts.push(out);
+  };
+  while (m = MD_LINK.exec(text)) {
+    if (m.index > last) pushPlain(text.slice(last, m.index));
+    const href = safeHref(m[2]);
+    if (href) {
+      parts.push(
+        `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(m[1])}</a>`
+      );
+    } else {
+      parts.push(esc(m[1]));
+    }
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) pushPlain(text.slice(last));
+  return parts.join("");
+};
+var IMG_MD2 = /^!\[([^\]]*)\]\((data:[^\s)]+|https?:\/\/[^\s)]+)\)\s*$/i;
+var BULLET_RE3 = /^\s*[-*•]\s+(.*)$/;
+var ROMAN_HEADER = /^\(\s*[ivx]+\s*\)\s+/i;
+var isAllCaps = (line) => {
+  const letters = line.replace(/[^A-Za-zÀ-ÿ]/g, "");
+  return letters.length >= 4 && letters === letters.toUpperCase();
+};
+var normalizeTextLines3 = (val) => {
+  if (val === null || val === void 0) return [];
+  if (Array.isArray(val)) {
+    return val.map((v) => str(v).trim()).filter(Boolean);
+  }
+  return str(val).split(/\n+/).map((v) => v.trim()).filter(Boolean);
+};
+var renderLines = (lines, cites, opts = {}) => {
+  const out = [];
+  let pendingImgs = [];
+  let pendingBullets = [];
+  let first = true;
+  const flushImgs = () => {
+    if (!pendingImgs.length) return;
+    const figs = pendingImgs.map((im) => {
+      const src = safeImgSrc(im.src);
+      if (!src) return "";
+      const cap = im.caption ? `<figcaption>${renderInline(im.caption, cites)}</figcaption>` : "";
+      return `<figure><img src="${src}" alt="${esc(im.caption || "")}">${cap}</figure>`;
+    }).filter(Boolean);
+    if (figs.length) out.push(`<div class="figrow">${figs.join("")}</div>`);
+    pendingImgs = [];
+  };
+  const flushBullets = () => {
+    if (!pendingBullets.length) return;
+    out.push(`<ul>${pendingBullets.map((b) => `<li>${b}</li>`).join("")}</ul>`);
+    pendingBullets = [];
+  };
+  lines.forEach((line) => {
+    const img = IMG_MD2.exec(line);
+    if (img) {
+      flushBullets();
+      pendingImgs.push({ src: img[2], caption: (img[1] || "").trim() || void 0 });
+      first = false;
+      return;
+    }
+    flushImgs();
+    const bullet = line.match(BULLET_RE3);
+    if (bullet) {
+      pendingBullets.push(renderInline(bullet[1].trim(), cites));
+      first = false;
+      return;
+    }
+    flushBullets();
+    if (ROMAN_HEADER.test(line)) {
+      out.push(`<h3 class="roman">${renderInline(line, cites)}</h3>`);
+    } else if (first && opts.kickerFirstLine && isAllCaps(line)) {
+      out.push(`<p class="kicker">${renderInline(line, cites)}</p>`);
+    } else {
+      out.push(`<p>${renderInline(line, cites)}</p>`);
+    }
+    first = false;
+  });
+  flushImgs();
+  flushBullets();
+  return out.join("");
+};
+var barChartSvg = (opts) => {
+  const { categories, series } = opts;
+  if (!categories.length || !series.length) return "";
+  const usable = series.filter((s) => s.values.some((v) => v !== null));
+  if (!usable.length) return "";
+  const W = 680;
+  const plotH = 190;
+  const topPad = 34;
+  const bottomPad = 28;
+  const H = topPad + plotH + bottomPad;
+  const leftPad = 16;
+  const rightPad = 16;
+  const plotW = W - leftPad - rightPad;
+  const maxVal = Math.max(
+    1e-9,
+    ...usable.flatMap((s) => s.values.map((v) => v === null ? 0 : Math.abs(v)))
+  );
+  const groupW = plotW / categories.length;
+  const barW = Math.min(38, groupW * 0.62 / usable.length);
+  const baseline = topPad + plotH;
+  const parts = [];
+  [0.25, 0.5, 0.75, 1].forEach((p) => {
+    const y = baseline - p * plotH;
+    parts.push(
+      `<line x1="${leftPad}" y1="${y}" x2="${W - rightPad}" y2="${y}" stroke="${P.border}" stroke-width="1" stroke-dasharray="3 3"/>`
+    );
+  });
+  parts.push(
+    `<line x1="${leftPad}" y1="${baseline}" x2="${W - rightPad}" y2="${baseline}" stroke="${P.muted}" stroke-width="1"/>`
+  );
+  categories.forEach((cat, ci) => {
+    const cx = leftPad + ci * groupW + groupW / 2;
+    const totalBars = usable.length;
+    usable.forEach((s, si) => {
+      const v = s.values[ci];
+      const x = cx - (totalBars * barW + (totalBars - 1) * 4) / 2 + si * (barW + 4);
+      if (v !== null) {
+        const h = Math.abs(v) / maxVal * plotH;
+        const y = baseline - h;
+        parts.push(
+          `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h, 1.5).toFixed(1)}" rx="3" fill="${s.color}"/>`
+        );
+        const label = v < 0 ? `(${opts.formatValue(Math.abs(v))})` : opts.formatValue(v);
+        parts.push(
+          `<text x="${(x + barW / 2).toFixed(1)}" y="${(y - 5).toFixed(1)}" text-anchor="middle" font-size="10.5" fill="${P.text}" font-weight="600">${esc(label)}</text>`
+        );
+      }
+    });
+    parts.push(
+      `<text x="${cx.toFixed(1)}" y="${baseline + 18}" text-anchor="middle" font-size="11" fill="${P.muted}">${esc(cat)}</text>`
+    );
+  });
+  const legend = usable.length > 1 ? `<div class="chart-legend">${usable.map(
+    (s) => `<span class="legend-item"><span class="legend-dot" style="background:${s.color}"></span>${esc(s.label)}</span>`
+  ).join("")}</div>` : "";
+  const cagrBadge = typeof opts.cagr === "number" && Number.isFinite(opts.cagr) ? `<span class="badge badge-primary">CAGR ${opts.cagr >= 0 ? "+" : ""}${frDecimal.format(opts.cagr)}\xA0%</span>` : "";
+  const head = opts.title || cagrBadge ? `<div class="chart-head">${opts.title ? `<span class="chart-title">${esc(opts.title)}</span>` : ""}${cagrBadge}</div>` : "";
+  return `<div class="chart-card">${head}<svg viewBox="0 0 ${W} ${H}" role="img" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>${legend}</div>`;
+};
+var pieChartSvg = (opts) => {
+  const pairs = opts.categories.map((c, i) => ({ label: str(c), value: Number(opts.values[i]) })).filter((p) => Number.isFinite(p.value) && p.value > 0);
+  const total = pairs.reduce((a, p) => a + p.value, 0);
+  if (!pairs.length || total <= 0) return "";
+  const R = 85;
+  const CX = 110;
+  const CY = 105;
+  let angle = -Math.PI / 2;
+  const slices = pairs.map((p, i) => {
+    const frac = p.value / total;
+    const a0 = angle;
+    const a1 = angle + frac * 2 * Math.PI;
+    angle = a1;
+    const large = a1 - a0 > Math.PI ? 1 : 0;
+    const x0 = CX + R * Math.cos(a0);
+    const y0 = CY + R * Math.sin(a0);
+    const x1 = CX + R * Math.cos(a1);
+    const y1 = CY + R * Math.sin(a1);
+    const color = PIE_COLORS[i % PIE_COLORS.length];
+    if (pairs.length === 1) {
+      return `<circle cx="${CX}" cy="${CY}" r="${R}" fill="${color}"/>`;
+    }
+    return `<path d="M ${CX} ${CY} L ${x0.toFixed(2)} ${y0.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;
+  });
+  const unit = opts.unit === "%" ? "\xA0%" : opts.unit ? `\xA0${opts.unit}` : "";
+  const legend = pairs.map((p, i) => {
+    const pct = frDecimal.format(p.value / total * 100);
+    const valueTxt = opts.unit === "%" ? `${frDecimal.format(p.value)}\xA0%` : `${frDecimal.format(p.value)}${unit} (${pct}\xA0%)`;
+    return `<span class="legend-item"><span class="legend-dot" style="background:${PIE_COLORS[i % PIE_COLORS.length]}"></span>${esc(p.label)} \u2014 ${esc(valueTxt)}</span>`;
+  }).join("");
+  const head = opts.title ? `<div class="chart-head"><span class="chart-title">${esc(opts.title)}</span></div>` : "";
+  return `<div class="chart-card chart-pie">${head}<div class="pie-flex"><svg viewBox="0 0 220 210" role="img" xmlns="http://www.w3.org/2000/svg">${slices.join("")}</svg><div class="chart-legend chart-legend-col">${legend}</div></div></div>`;
+};
+var renderChart = (chart, cites) => {
+  if (!chart || typeof chart !== "object") return "";
+  const type = str(chart.chart_type || chart.type).toLowerCase();
+  const categories = asArray(chart.categories).map((c) => str(c));
+  const values = asArray(chart.values).map((v) => parseMaybeNumber2(v));
+  if (type === "pie_chart" || type === "pie") {
+    return pieChartSvg({
+      categories,
+      values: values.map((v) => v === null ? 0 : v),
+      title: isNonEmptyString(chart.title) ? chart.title : void 0,
+      unit: isNonEmptyString(chart.unit) ? chart.unit : void 0
+    });
+  }
+  const unit = isNonEmptyString(chart.unit) ? chart.unit : "";
+  return barChartSvg({
+    categories,
+    series: [
+      {
+        label: str(chart.title || "Valeurs"),
+        color: P.primary,
+        values
+      }
+    ],
+    formatValue: (n) => unit ? `${fmtCompact(n)}\xA0${unit}` : fmtCompact(n),
+    title: isNonEmptyString(chart.title) ? chart.title : void 0,
+    cagr: typeof chart.cagr === "number" ? chart.cagr : parseMaybeNumber2(chart.cagr),
+    unit
+  });
+};
+var sourcesBlock = (sources, label = "Sources") => {
+  const list = asArray(sources).map((s) => str(s).trim()).filter(Boolean);
+  if (!list.length) return "";
+  const links = list.map((s, i) => {
+    const href = safeHref(s);
+    if (!href) return `<span class="source-item">[${i + 1}] ${esc(s)}</span>`;
+    return `<a class="source-item" href="${esc(href)}" target="_blank" rel="noopener">[${i + 1}] ${esc(hostnameOf(href))}</a>`;
+  }).join(" ");
+  return `<div class="sources"><span class="sources-label">${esc(label)}</span> ${links}</div>`;
+};
+var initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+var scoreBadge = (item) => {
+  const computed = typeof item.score === "number" ? item.score : typeof item.noteI === "number" && typeof item.noteP === "number" ? item.noteI * item.noteP : null;
+  if (computed === null) return "";
+  const cls = computed >= 12 ? "badge-red" : computed >= 6 ? "badge-orange" : "badge-green";
+  const detail = typeof item.noteI === "number" && typeof item.noteP === "number" ? `${item.noteI}\xD7${item.noteP} = ${computed}` : String(computed);
+  return `<span class="badge ${cls}">${esc(detail)}</span>`;
+};
+var bulletList = (items) => {
+  const arr = asArray(items).map((v) => str(v).trim()).filter(Boolean);
+  if (!arr.length) return "";
+  return `<ul>${arr.map((v) => `<li>${esc(v)}</li>`).join("")}</ul>`;
+};
+var collectInpiSeries2 = (data) => {
+  const sectionsDef = [
+    { key: "performance", title: "Performance" },
+    { key: "croissance", title: "Croissance" },
+    { key: "autres", title: "Autres" }
+  ];
+  const newPayload = Array.isArray(data) ? data.find(
+    (entry) => entry && typeof entry === "object" && (Array.isArray(entry.metrics) || Array.isArray(entry.years))
+  ) : data && typeof data === "object" && Array.isArray(data.metrics) ? data : null;
+  if (newPayload?.metrics) {
+    const series2 = [];
+    asArray(newPayload.metrics).forEach((metric) => {
+      if (!metric) return;
+      const sectionKey = str(metric.section || "autres").toLowerCase();
+      const title = sectionsDef.find((s) => s.key === sectionKey)?.title || sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1);
+      const totals = metric.total_par_annee ?? {};
+      const values = Object.fromEntries(
+        Object.entries(totals).map(([year, entry]) => {
+          if (entry && typeof entry === "object" && "valeur" in entry) {
+            return [year, entry.valeur ?? "\u2014"];
+          }
+          return [year, entry];
+        })
+      );
+      series2.push({ label: metric.label || "Indicateur", kind: metric.kind, values, section: title });
+    });
+    const years2 = Array.isArray(newPayload.years) && newPayload.years.length ? Array.from(new Set(newPayload.years.map((y) => String(y)))) : Array.from(new Set(series2.flatMap((s) => Object.keys(s.values || {})))).sort(
+      (a, b) => a.localeCompare(b, void 0, { numeric: true })
+    );
+    return { series: series2, years: years2 };
+  }
+  const series = [];
+  sectionsDef.forEach(({ key, title }) => {
+    asArray(data?.[key]).forEach((item) => {
+      if (!item) return;
+      series.push({
+        label: item.label || "Indicateur",
+        kind: item.kind,
+        values: item.values && typeof item.values === "object" ? item.values : {},
+        section: title
+      });
+    });
+  });
+  const years = Array.from(new Set(series.flatMap((s) => Object.keys(s.values || {})))).sort(
+    (a, b) => a.localeCompare(b, void 0, { numeric: true })
+  );
+  return { series, years };
+};
+var renderInpiTable = (series, years) => {
+  if (!series.length || !years.length) return "";
+  const order = ["Performance", "Croissance", "Autres"];
+  const buckets = /* @__PURE__ */ new Map();
+  series.forEach((s) => {
+    const list = buckets.get(s.section) ?? [];
+    list.push(s);
+    buckets.set(s.section, list);
+  });
+  const orderedKeys = [
+    ...order.filter((k) => buckets.has(k)),
+    ...[...buckets.keys()].filter((k) => !order.includes(k))
+  ];
+  const rows = [];
+  orderedKeys.forEach((sectionTitle) => {
+    rows.push(
+      `<tr class="inpi-section"><td colspan="${years.length + 1}">${esc(sectionTitle)}</td></tr>`
+    );
+    (buckets.get(sectionTitle) ?? []).forEach((item) => {
+      const label = str(item.label).replace(/\s*\(?m?€\)?\s*$/i, "").trim() || "Indicateur";
+      rows.push(
+        `<tr><td>${esc(label)}</td>${years.map((y) => `<td class="num">${fmtInpiCell2(item.values?.[y], item.kind, item.label)}</td>`).join("")}</tr>`
+      );
+    });
+  });
+  return `<div class="table-wrap"><table class="tbl inpi"><thead><tr><th>Indicateur</th>${years.map((y) => `<th class="num">${esc(y)}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
+};
+var renderInpiChart = (series, years) => {
+  const barA = series.find((s) => s.label === "Chiffre d'affaires (\u20AC)");
+  const barB = series.find((s) => s.label === "EBITDA - EBE (\u20AC)");
+  if (!barA || !barB || !years.length) return "";
+  const values = (s) => years.map((y) => parseMaybeNumber2(s.values?.[y]));
+  return barChartSvg({
+    categories: years,
+    series: [
+      { label: "Chiffre d'affaires", color: P.primary, values: values(barA) },
+      { label: "EBITDA", color: P.barSecondary, values: values(barB) }
+    ],
+    formatValue: (n) => `${fmtCompact(n)}\xA0\u20AC`,
+    title: "CA vs EBITDA"
+  });
+};
+var renderDashboard = (data, cites) => {
+  const blocks = [];
+  const c = data.characteristics || {};
+  const infoRows = [];
+  const infoRow = (label, valueHtml) => {
+    if (valueHtml) infoRows.push(`<tr><th>${esc(label)}</th><td>${valueHtml}</td></tr>`);
+  };
+  infoRow("Secteur", isNonEmptyString(c.sector) ? esc(c.sector) : "");
+  infoRow("Sous-secteur", isNonEmptyString(c.subSector) ? esc(c.subSector) : "");
+  infoRow(
+    "Pr\xE9sence g\xE9ographique",
+    isNonEmptyString(c.geographicFootprint) ? esc(c.geographicFootprint) : ""
+  );
+  infoRow("Cha\xEEne de valeur", bulletList(c.valueChain));
+  infoRow("Business model", bulletList(c.businessModel));
+  if (infoRows.length) {
+    blocks.push(
+      `<div class="card"><h3>Informations g\xE9n\xE9rales</h3><table class="kv">${infoRows.join("")}</table></div>`
+    );
+  }
+  const kpis = asArray(data.kpis).filter((k) => isNonEmptyString(k?.label) || isNonEmptyString(k?.value));
+  if (kpis.length) {
+    blocks.push(
+      `<div class="kpi-grid">${kpis.map(
+        (k) => `<div class="kpi-card"><div class="kpi-value">${esc(str(k.value) || "\u2014")}</div><div class="kpi-label">${esc(str(k.label))}</div></div>`
+      ).join("")}</div>`
+    );
+  }
+  const mgmt = asArray(data.management).filter((m) => isNonEmptyString(m?.nom_prenom));
+  if (mgmt.length) {
+    blocks.push(
+      `<div class="card"><h3>Management</h3><div class="chip-row">${mgmt.map((m) => {
+        const name = str(m.nom_prenom).trim();
+        const href = safeHref(m.profil_url);
+        const inner = `<span class="avatar">${esc(initials(name))}</span><span>${esc(name)}</span>`;
+        return href ? `<a class="chip chip-link" href="${esc(href)}" target="_blank" rel="noopener">${inner}</a>` : `<span class="chip">${inner}</span>`;
+      }).join("")}</div></div>`
+    );
+  }
+  const shareholding = asArray(data.shareholding).filter((s) => isNonEmptyString(s?.nom_actionnaire));
+  if (shareholding.length) {
+    blocks.push(
+      `<div class="card"><h3>Actionnariat</h3><ul class="share-list">${shareholding.map(
+        (s) => `<li><span>${esc(str(s.nom_actionnaire))}</span><span class="share-pct">${esc(str(s.participation) || "\u2014")}</span></li>`
+      ).join("")}</ul></div>`
+    );
+  }
+  const events = asArray(data.keyEvents).filter(
+    (e) => isNonEmptyString(e?.description) || isNonEmptyString(e?.year)
+  );
+  if (events.length) {
+    blocks.push(
+      `<div class="card"><h3>\xC9tapes cl\xE9s de d\xE9veloppement</h3><div class="timeline">${events.map(
+        (e) => `<div class="tl-item"><div class="tl-year">${esc(str(e.year))}${isNonEmptyString(e.category) ? `<span class="badge badge-primary">${esc(e.category)}</span>` : ""}</div><div class="tl-desc">${renderInline(e.description, cites)}</div></div>`
+      ).join("")}</div></div>`
+    );
+  }
+  const equity = asArray(data.equityStory).filter(
+    (e) => isNonEmptyString(e?.title) || isNonEmptyString(e?.description)
+  );
+  if (equity.length) {
+    blocks.push(
+      `<div class="card"><h3>Equity story</h3><div class="equity-grid">${equity.map(
+        (e, i) => `<div class="equity-card"><div class="equity-num">${esc(String(e.index ?? i + 1))}</div><div><div class="equity-title">${esc(str(e.title))}</div><p>${renderInline(e.description, cites)}</p></div></div>`
+      ).join("")}</div></div>`
+    );
+  }
+  const { series, years } = collectInpiSeries2(data.kpisInpi);
+  const inpiTable = renderInpiTable(series, years);
+  const inpiChart = renderInpiChart(series, years);
+  if (inpiTable || inpiChart) {
+    blocks.push(`<div class="card"><h3>KPIs financiers (INPI)</h3>${inpiTable}${inpiChart}</div>`);
+  }
+  blocks.push(sourcesBlock(data.sources));
+  return blocks.join("");
+};
+var renderStructuredImages = (images, cites) => {
+  const imgs = asArray(images).map((im) => {
+    const rawSrc = typeof im === "string" ? im : im?.src ?? im?.url ?? im?.image ?? "";
+    const src = safeImgSrc(rawSrc);
+    if (!src) return null;
+    const caption = typeof im === "object" && im ? str(im.caption ?? im.legend ?? "").trim() : "";
+    return { src, caption };
+  }).filter(Boolean);
+  if (!imgs.length) return "";
+  return `<div class="figrow">${imgs.map(
+    (im) => `<figure><img src="${im.src}" alt="${esc(im.caption)}">${im.caption ? `<figcaption>${renderInline(im.caption, cites)}</figcaption>` : ""}</figure>`
+  ).join("")}</div>`;
+};
+var renderRichSections = (sections, cites) => sections.map((sec) => {
+  const out = [];
+  if (isNonEmptyString(sec?.title)) {
+    out.push(`<h3 class="roman">${renderInline(sec.title, cites)}</h3>`);
+  }
+  asArray(sec?.subsections).forEach((sub) => {
+    if (isNonEmptyString(sub?.subtitle)) {
+      out.push(`<h4 class="subtitle">${renderInline(sub.subtitle, cites)}</h4>`);
+    }
+    if (sub?.text) out.push(renderLines(normalizeTextLines3(sub.text), cites));
+    out.push(renderStructuredImages(sub?.images, cites));
+  });
+  return `<div class="prose-block">${out.join("")}</div>`;
+}).join("");
+var renderPresentation = (content, cites) => {
+  const obj = content && typeof content === "object" ? content : null;
+  const out = [];
+  if (obj && isNonEmptyString(obj.rootTitle)) {
+    out.push(`<p class="kicker">${renderInline(str(obj.rootTitle).toUpperCase(), cites)}</p>`);
+  }
+  if (obj && Array.isArray(obj.sections) && obj.sections.length) {
+    out.push(renderRichSections(obj.sections, cites));
+  } else {
+    const descCandidate = obj?.presentation || obj?.presentation_entreprise || obj?.Presentation || obj?.PresentationEntreprise || obj?.Description?.description || obj?.description || (typeof content === "string" ? content : null);
+    if (descCandidate) {
+      out.push(
+        `<div class="prose-block">${renderLines(normalizeTextLines3(descCandidate), cites, {
+          kickerFirstLine: true
+        })}</div>`
+      );
+    } else if (obj) {
+      Object.entries(obj).filter(([k]) => !/source/i.test(k)).forEach(([key, val]) => {
+        out.push(
+          `<div class="prose-block"><h3 class="roman">${esc(key)}</h3>${renderLines(
+            normalizeTextLines3(val),
+            cites
+          )}</div>`
+        );
+      });
+    }
+  }
+  if (obj?.sources) out.push(sourcesBlock(obj.sources));
+  return out.join("");
+};
+var renderActionnariat = (data, cites) => {
+  if (!data) return "";
+  const out = [];
+  const actions = asArray(data.actions).filter((a) => isNonEmptyString(a?.nom_actionnaire));
+  if (actions.length) {
+    out.push(
+      `<div class="card"><h3>Actionnariat actuel</h3><div class="table-wrap"><table class="tbl"><thead><tr><th>Actionnaire</th><th class="num">Participation</th><th>Description</th></tr></thead><tbody>${actions.map(
+        (a) => `<tr><td>${esc(str(a.nom_actionnaire))}</td><td class="num">${esc(str(a.participation) || "\u2014")}</td><td>${renderInline(a.description, cites)}</td></tr>`
+      ).join("")}</tbody></table></div></div>`
+    );
+  }
+  const ops = asArray(data.ops).filter(
+    (o) => isNonEmptyString(o?.operation) || isNonEmptyString(o?.type_operation)
+  );
+  if (ops.length) {
+    out.push(
+      `<div class="card"><h3>Op\xE9rations capitalistiques</h3><div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th>Op\xE9ration</th><th>Source</th></tr></thead><tbody>${ops.map(
+        (o) => `<tr><td>${esc(str(o.date))}</td><td>${isNonEmptyString(o.type_operation) ? `<span class="badge badge-primary">${esc(o.type_operation)}</span>` : ""}</td><td>${renderInline(o.operation, cites)}</td><td>${safeHref(o.source) ? linkOrText(o.source, hostnameOf(safeHref(o.source))) : ""}</td></tr>`
+      ).join("")}</tbody></table></div></div>`
+    );
+  }
+  const advisors = asArray(data.advisors).filter((a) => isNonEmptyString(a?.nom));
+  if (advisors.length) {
+    out.push(
+      `<div class="card"><h3>Conseils</h3><div class="chip-row">${advisors.map(
+        (a) => `<span class="chip">${esc(str(a.nom))}${isNonEmptyString(a.role) ? `<span class="chip-sub">${esc(a.role)}</span>` : ""}</span>`
+      ).join("")}</div></div>`
+    );
+  }
+  return out.join("");
+};
+var renderManagement = (managers, cites) => {
+  const list = asArray(managers).filter((m) => isNonEmptyString(m?.nom_prenom));
+  if (!list.length) return "";
+  return `<div class="mgmt-grid">${list.map((m) => {
+    const name = str(m.nom_prenom).trim();
+    const href = safeHref(m.profil_url);
+    const photo = safeImgSrc(m.photo ?? m.photo_url ?? m.avatar);
+    const avatar = photo ? `<img class="avatar avatar-lg" src="${photo}" alt="${esc(name)}">` : `<span class="avatar avatar-lg">${esc(initials(name))}</span>`;
+    return `<div class="card mgmt-card">
+  <div class="mgmt-head">${avatar}<div><div class="mgmt-name">${esc(name)}</div>${isNonEmptyString(m.role) ? `<div class="mgmt-role">${esc(m.role)}</div>` : ""}</div></div>
+  ${isNonEmptyString(m.paragraphe_introduction) ? `<p>${renderInline(m.paragraphe_introduction, cites)}</p>` : ""}
+  ${href ? `<a class="pill" href="${esc(href)}" target="_blank" rel="noopener">Profil LinkedIn</a>` : ""}
+</div>`;
+  }).join("")}</div>`;
+};
+var renderMarketRichSection = (sec, cites, depth = 0) => {
+  if (!sec || typeof sec !== "object") return "";
+  const out = [];
+  if (isNonEmptyString(sec.title)) {
+    out.push(depth === 0 ? `<h4 class="subtitle">${renderInline(sec.title, cites)}</h4>` : `<h5 class="subsubtitle">${renderInline(sec.title, cites)}</h5>`);
+  }
+  if (sec.content) out.push(renderLines(normalizeTextLines3(sec.content), cites));
+  if (sec.text) out.push(renderLines(normalizeTextLines3(sec.text), cites));
+  asArray(sec.charts).forEach((chart) => out.push(renderChart(chart, cites)));
+  out.push(renderStructuredImages(sec.images, cites));
+  asArray(sec.subsections).forEach((sub) => out.push(renderMarketRichSection(sub, cites, depth + 1)));
+  return out.join("");
+};
+var ecosystemChips = (entries) => {
+  const chips = asArray(entries).map((entry) => {
+    let name = "";
+    let logo = null;
+    if (Array.isArray(entry)) {
+      name = str(entry[0]).trim();
+      logo = safeImgSrc(entry[1]);
+    } else if (typeof entry === "string") {
+      name = entry.trim();
+    } else if (entry && typeof entry === "object") {
+      name = str(entry.name ?? entry.nom ?? "").trim();
+      logo = safeImgSrc(entry.logo ?? entry.logo_url);
+    }
+    if (!name) return "";
+    return `<span class="chip">${logo ? `<img class="chip-logo" src="${logo}" alt="">` : ""}${esc(name)}</span>`;
+  }).filter(Boolean);
+  return chips.length ? `<div class="chip-row">${chips.join("")}</div>` : "";
+};
+var renderMarket = (content, cites) => {
+  const obj = content && typeof content === "object" ? content : null;
+  if (!obj) {
+    return typeof content === "string" ? `<div class="prose-block">${renderLines(normalizeTextLines3(content), cites)}</div>` : "";
+  }
+  const out = [];
+  if (isNonEmptyString(obj.rootTitle)) {
+    out.push(`<p class="kicker">${renderInline(str(obj.rootTitle).toUpperCase(), cites)}</p>`);
+  }
+  const pres = obj.Presentation ?? obj.presentation;
+  if (pres && Array.isArray(pres.sections) && pres.sections.length) {
+    out.push(`<div class="prose-block">${renderRichSections(pres.sections, cites)}</div>`);
+  }
+  const msg = obj["MarketSize&Growth"] ?? obj.MarketSizeGrowth ?? obj.market_size_growth;
+  if (msg && typeof msg === "object") {
+    const inner = asArray(msg.sections).map((sec) => renderMarketRichSection(sec, cites)).join("");
+    if (inner || isNonEmptyString(msg.title)) {
+      out.push(
+        `<div class="card"><h3>${esc(str(msg.title) || "Taille du march\xE9 & croissance")}</h3>${inner}</div>`
+      );
+    }
+  }
+  const drivers = asArray(obj.GrowthDrivers?.drivers ?? obj.growth_drivers?.drivers).filter(
+    (d) => isNonEmptyString(d?.driver_title) || asArray(d?.arguments).length
+  );
+  if (drivers.length) {
+    out.push(
+      `<div class="card"><h3>Facteurs de croissance</h3>${drivers.map((d) => {
+        const logo = safeImgSrc(d?.logo?.url ?? d?.logo);
+        return `<div class="driver-row">
+  <div class="driver-title">${logo ? `<img class="chip-logo" src="${logo}" alt="">` : ""}<span>${esc(str(d.driver_title))}</span></div>
+  <div class="driver-arrow">&#8594;</div>
+  <div class="driver-args">${bulletList(d.arguments)}</div>
+</div>`;
+      }).join("")}</div>`
+    );
+  }
+  const steps = asArray(obj.ValueChain?.steps).filter((s) => isNonEmptyString(s?.name));
+  if (steps.length) {
+    const intro = isNonEmptyString(obj.ValueChain?.introduction) ? `<p>${renderInline(obj.ValueChain.introduction, cites)}</p>` : "";
+    const cols = steps.map((s) => {
+      const isCore = str(s.type).toLowerCase() === "core";
+      const activities = str(s.core_activities).split(/\n/).map((l) => l.replace(/^\s*-\s*/, "").trim()).filter(Boolean);
+      return `<div class="vc-step">
+  <div class="vc-head ${isCore ? "vc-core" : "vc-noncore"}"><span class="vc-num">${esc(str(s.step_number ?? ""))}</span>${esc(str(s.name))}</div>
+  <div class="vc-body"><ul>${activities.map((a) => `<li>${esc(a)}</li>`).join("")}</ul></div>
+</div>`;
+    }).join("");
+    out.push(
+      `<div class="card"><h3>Cha\xEEne de valeur</h3>${intro}<div class="vc-row">${cols}</div><div class="vc-legend"><span class="legend-item"><span class="legend-dot" style="background:${P.primary}"></span>C\u0153ur d'activit\xE9</span><span class="legend-item"><span class="legend-dot" style="background:${P.primaryMuted};border:1px solid ${P.primary}"></span>Hors c\u0153ur / externalis\xE9</span></div></div>`
+    );
+  }
+  const barriers = asArray(obj.BarriersEntry?.barrieres?.items).filter(
+    (b) => isNonEmptyString(b?.titre) || asArray(b?.bullet_points).length
+  );
+  if (barriers.length) {
+    out.push(
+      `<div class="card"><h3>Barri\xE8res \xE0 l'entr\xE9e</h3><div class="quad-grid">${barriers.map((b) => {
+        const logo = safeImgSrc(b?.logo);
+        return `<div class="quad">
+  <div class="quad-title">${logo ? `<img class="chip-logo" src="${logo}" alt="">` : ""}${esc(str(b.titre))}</div>
+  ${bulletList(b.bullet_points)}
+</div>`;
+      }).join("")}</div>${sourcesBlock(obj.BarriersEntry?.barrieres?.sources)}</div>`
+    );
+  }
+  const suppliers = asArray(obj.MarketEcosystem?.supplier_types);
+  const clients = asArray(obj.MarketEcosystem?.client_types);
+  if (suppliers.length || clients.length) {
+    const col = (title, groups, key) => `<div class="eco-col"><div class="eco-title">${esc(title)}</div>${groups.map(
+      (g) => `<div class="eco-group"><div class="eco-type">${esc(str(g.type))}</div>${ecosystemChips(g[key])}</div>`
+    ).join("")}</div>`;
+    out.push(
+      `<div class="card"><h3>\xC9cosyst\xE8me de march\xE9</h3><div class="eco-row">${suppliers.length ? col("Fournisseurs", suppliers, "key_suppliers") : ""}${clients.length ? col("Clients", clients, "key_clients") : ""}</div></div>`
+    );
+  }
+  const endMarkets = asArray(obj.EndMarket?.end_markets).filter((m) => isNonEmptyString(m?.name));
+  if (endMarkets.length) {
+    out.push(
+      `<div class="card"><h3>March\xE9s finaux</h3><div class="em-grid">${endMarkets.map((m) => {
+        const badge = safeImgSrc(m.badgeUrl ?? m.badge ?? m.badge_url);
+        const clientChips = ecosystemChips(m.key_clients);
+        return `<div class="em-card">
+  <div class="em-name">${badge ? `<img class="chip-logo" src="${badge}" alt="">` : ""}${esc(str(m.name))}</div>
+  ${isNonEmptyString(m.description) ? `<p>${renderInline(m.description, cites)}</p>` : ""}
+  ${isNonEmptyString(m.key_use_case) ? `<p class="em-usecase"><strong>Cas d'usage :</strong> ${renderInline(m.key_use_case, cites)}</p>` : ""}
+  ${clientChips}
+</div>`;
+      }).join("")}</div></div>`
+    );
+  }
+  out.push(sourcesBlock(obj.sources));
+  return out.join("");
+};
+var renderCompetitors = (competitors, cites) => {
+  const list = asArray(competitors);
+  if (!list.length) return "";
+  const rows = list.map((comp) => {
+    const nameRaw = comp?.competitor_name ?? comp?.name ?? comp?.company_name ?? comp?.actor;
+    const name = str(nameRaw).trim() || "\u2014";
+    const url = safeHref(comp?.URL ?? comp?.url ?? comp?.website);
+    const logo = safeImgSrc(comp?.logoDataUrl);
+    const flags = asArray(comp?.countryFlags).map((f) => {
+      const src = safeImgSrc(f?.src);
+      const label = str(f?.name ?? f?.code).trim();
+      return src ? `<img class="flag" src="${src}" alt="${esc(label)}" title="${esc(label)}">` : label ? `<span class="chip chip-sm">${esc(label)}</span>` : "";
+    }).filter(Boolean).join(" ");
+    const year = str(comp?.annee_de_creation ?? comp?.year ?? "").trim();
+    const ownership = str(comp?.actionnariat ?? "").trim();
+    const description = str(comp?.produits_et_services ?? comp?.description ?? "").trim();
+    const nameCell = url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>` : esc(name);
+    return `<tr>
+  <td class="logo-cell">${logo ? `<img class="comp-logo" src="${logo}" alt="${esc(name)}">` : `<span class="avatar">${esc(initials(name))}</span>`}</td>
+  <td>${nameCell}</td>
+  <td class="num">${esc(year)}</td>
+  <td>${flags}</td>
+  <td>${esc(ownership)}</td>
+  <td>${renderInline(description, cites)}${sourcesBlock(comp?.sources, "Sources")}</td>
+</tr>`;
+  }).join("");
+  return `<div class="table-wrap"><table class="tbl"><thead><tr><th></th><th>Acteur</th><th class="num">Cr\xE9ation</th><th>Pays</th><th>Actionnariat</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+};
+var renderRiskOppTable = (items, variant, cites) => {
+  if (!items.length) return "";
+  const titleColor = variant === "risk" ? P.red : P.green;
+  const heading = variant === "risk" ? "Risques" : "Opportunit\xE9s";
+  const rows = items.map(
+    (item) => `<tr>
+  <td><span class="ro-title" style="color:${titleColor}">${esc(str(item.title))}</span>${sourcesBlock(item.sources)}</td>
+  <td>${bulletListInline(item.impact, cites)}</td>
+  <td>${bulletListInline(item.probability, cites)}</td>
+  <td class="num">${scoreBadge(item)}</td>
+</tr>`
+  ).join("");
+  return `<div class="card"><h3 style="color:${titleColor}">${heading}</h3><div class="table-wrap"><table class="tbl ro-tbl"><thead><tr><th>Titre</th><th>Impact</th><th>Probabilit\xE9</th><th class="num">I\xD7P</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+};
+var bulletListInline = (items, cites) => {
+  const arr = asArray(items).map((v) => str(v).trim()).filter(Boolean);
+  if (!arr.length) return "";
+  return `<ul>${arr.map((v) => `<li>${renderInline(v, cites)}</li>`).join("")}</ul>`;
+};
+var renderInsights = (content, cites) => {
+  const parsed = extractRiskOpp(content, "Risques");
+  const out = [];
+  out.push(renderRiskOppTable(parsed.risks, "risk", cites));
+  out.push(renderRiskOppTable(parsed.opportunities, "opp", cites));
+  out.push(sourcesBlock(parsed.sources));
+  return out.join("");
+};
+var renderNotes = (reports) => {
+  const list = asArray(reports).filter(
+    (r) => isNonEmptyString(r?.titre) || isNonEmptyString(r?.title)
+  );
+  if (!list.length) return "";
+  return `<div class="table-wrap"><table class="tbl"><thead><tr><th>Titre</th><th>Source</th><th>Lien</th></tr></thead><tbody>${list.map((r) => {
+    const link = r?.lien ?? r?.link ?? r?.url;
+    return `<tr><td>${esc(str(r.titre ?? r.title))}</td><td>${esc(str(r.source))}</td><td>${safeHref(link) ? linkOrText(link, hostnameOf(safeHref(link))) : ""}</td></tr>`;
+  }).join("")}</tbody></table></div>`;
+};
+var renderDeals = (deals, cites) => {
+  const list = asArray(deals).filter(
+    (d) => isNonEmptyString(d?.cible) || isNonEmptyString(d?.description)
+  );
+  if (!list.length) return "";
+  return `<div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Pays</th><th>Cible</th><th>Acqu\xE9reur</th><th>Type</th><th>Description</th></tr></thead><tbody>${list.map(
+    (d) => `<tr>
+  <td class="nowrap">${esc(str(d.date))}</td>
+  <td>${esc(str(d.pays))}</td>
+  <td><strong>${esc(str(d.cible))}</strong></td>
+  <td>${esc(str(d.acquereur))}</td>
+  <td>${isNonEmptyString(d.type_acquisition) ? `<span class="badge badge-primary">${esc(d.type_acquisition)}</span>` : ""}</td>
+  <td>${renderInline(d.description, cites)}${sourcesBlock(d.sources)}</td>
+</tr>`
+  ).join("")}</tbody></table></div>`;
+};
+var renderArticles = (articles, cites) => {
+  const list = asArray(articles).filter((a) => isNonEmptyString(a?.title) || isNonEmptyString(a?.titre));
+  if (!list.length) return "";
+  return `<div class="table-wrap"><table class="tbl"><thead><tr><th>Titre</th><th>Source</th><th class="nowrap">Date</th><th>Th\xE8me</th><th>R\xE9sum\xE9</th></tr></thead><tbody>${list.map((a) => {
+    const title = str(a.title ?? a.titre).trim();
+    const link = a?.lien ?? a?.link ?? a?.url;
+    const titleCell = safeHref(link) ? `<a href="${esc(safeHref(link))}" target="_blank" rel="noopener">${esc(title)}</a>` : esc(title);
+    return `<tr>
+  <td><strong>${titleCell}</strong></td>
+  <td>${esc(str(a.source))}</td>
+  <td class="nowrap">${esc(str(a.date_de_publication ?? a.date))}</td>
+  <td>${esc(str(a.characteristics))}</td>
+  <td>${renderInline(a.resume ?? a.summary, cites)}</td>
+</tr>`;
+  }).join("")}</tbody></table></div>`;
+};
+var buildCss = () => `
+:root{--primary:${P.primary};--primary-muted:${P.primaryMuted};--border:${P.border};--card:${P.card};--text:${P.text};--muted:${P.muted}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:#fff;font-size:14px;line-height:1.55}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+header.app{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:10px 22px;background:#fff;border-bottom:1px solid var(--border)}
+header.app .naviia-logo{height:30px;width:auto}
+header.app .company{font-size:17px;font-weight:700;letter-spacing:-.01em}
+header.app .sep{width:1px;height:24px;background:var(--border)}
+header.app .spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--primary);background:#fff;white-space:nowrap}
+.pill:hover{background:var(--primary-muted);text-decoration:none}
+.print-btn{cursor:pointer;border:none;background:var(--primary);color:#fff;font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:8px}
+.print-btn:hover{opacity:.9}
+nav.tabs{position:sticky;top:51px;z-index:19;display:flex;gap:6px;flex-wrap:wrap;padding:8px 22px;background:#fff;border-bottom:1px solid var(--border)}
+nav.tabs button{cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--muted);font-size:12.5px;font-weight:600;padding:5px 14px;border-radius:999px}
+nav.tabs button:hover{border-color:var(--primary);color:var(--primary)}
+nav.tabs button.active{background:var(--primary);border-color:var(--primary);color:#fff}
+main{max-width:1080px;margin:0 auto;padding:22px}
+section.panel{display:none}
+section.panel.active{display:block}
+section.panel>h2{display:none}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.card h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--primary);margin-bottom:10px}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+h3.roman{font-size:15.5px;font-weight:700;color:var(--text);margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--primary-muted)}
+h4.subtitle{font-size:13.5px;font-weight:700;color:var(--primary);margin:14px 0 6px}
+h5.subsubtitle{font-size:12.5px;font-weight:700;color:var(--text);margin:10px 0 4px}
+.prose-block p{margin:0 0 9px;text-align:justify}
+.prose-block ul,.card ul{margin:0 0 9px 18px}
+.prose-block li,.card li{margin-bottom:3px}
+p{margin-bottom:8px}
+.figrow{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 14px}
+.figrow figure{flex:1 1 260px;max-width:460px}
+.figrow img{width:100%;max-width:100%;max-height:340px;object-fit:cover;border-radius:10px;border:1px solid var(--border);background:#fff}
+figcaption{font-size:11.5px;color:var(--muted);margin-top:4px}
+a.cite{font-size:10.5px;font-weight:700;color:var(--muted);vertical-align:super}
+.kv{width:100%;border-collapse:collapse}
+.kv th{width:190px;text-align:left;vertical-align:top;font-size:12px;color:var(--muted);font-weight:600;padding:6px 10px 6px 0;border-bottom:1px solid var(--border)}
+.kv td{padding:6px 0;border-bottom:1px solid var(--border);vertical-align:top}
+.kv tr:last-child th,.kv tr:last-child td{border-bottom:none}
+.kv ul{margin:0 0 0 16px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.kpi-card{background:var(--primary-muted);border:1px solid #E0E7FF;border-radius:12px;padding:14px 16px}
+.kpi-value{font-size:20px;font-weight:800;color:var(--primary);letter-spacing:-.01em}
+.kpi-label{font-size:12px;color:var(--muted);margin-top:3px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;background:#fff;border:1px solid var(--border);border-radius:999px;font-size:12.5px}
+.chip-sm{padding:2px 8px;font-size:11px}
+.chip-sub{color:var(--muted);font-size:11.5px;margin-left:2px}
+.chip-link:hover{border-color:var(--primary);text-decoration:none}
+.chip-logo{width:18px;height:18px;object-fit:contain;border-radius:4px}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font-size:10px;font-weight:700;flex:none}
+.avatar-lg{width:44px;height:44px;font-size:15px;border-radius:12px;object-fit:cover}
+.share-list{list-style:none;margin:0!important}
+.share-list li{display:flex;justify-content:space-between;gap:14px;padding:6px 0;border-bottom:1px solid var(--border)}
+.share-list li:last-child{border-bottom:none}
+.share-pct{font-weight:700;color:var(--primary);white-space:nowrap}
+.timeline{border-left:2px solid var(--primary-muted);padding-left:16px;margin-left:4px}
+.tl-item{position:relative;padding-bottom:14px}
+.tl-item:before{content:"";position:absolute;left:-21px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.tl-year{font-weight:800;color:var(--primary);font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.tl-desc{font-size:13px}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-primary{background:var(--primary-muted);color:var(--primary)}
+.badge-red{background:${P.redBg};color:${P.red}}
+.badge-orange{background:${P.orangeBg};color:${P.orange}}
+.badge-green{background:${P.greenBg};color:${P.green}}
+.equity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.equity-card{display:flex;gap:12px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.equity-num{flex:none;width:28px;height:28px;border-radius:8px;background:var(--primary);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.equity-title{font-weight:700;font-size:13px;margin-bottom:3px}
+.equity-card p{font-size:12.5px;color:#374151;margin:0}
+.table-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+table.tbl th{background:var(--primary-muted);color:var(--text);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+table.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+table.tbl tbody tr:nth-child(even){background:#FAFAFA}
+table.tbl tbody tr:last-child td{border-bottom:none}
+table.tbl td.num,table.tbl th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.tbl .nowrap{white-space:nowrap}
+tr.inpi-section td{background:#F1F5F9;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+.logo-cell{width:44px}
+.comp-logo{width:32px;height:32px;object-fit:contain;border-radius:6px;border:1px solid var(--border);background:#fff}
+.flag{width:20px;height:14px;object-fit:cover;border-radius:2px;border:1px solid var(--border);vertical-align:middle}
+.ro-title{font-weight:700}
+.ro-tbl td:first-child{min-width:170px}
+.ro-tbl ul{margin-left:16px}
+.chart-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:12px 0}
+.chart-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.chart-title{font-size:12.5px;font-weight:700}
+.chart-card svg{width:100%;height:auto;display:block}
+.chart-pie svg{max-width:230px;flex:none}
+.pie-flex{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.chart-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px}
+.chart-legend-col{flex-direction:column;gap:5px;margin-top:0}
+.legend-item{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex:none}
+.driver-row{display:grid;grid-template-columns:minmax(180px,1fr) 30px minmax(220px,1.6fr);gap:10px;align-items:center;margin-bottom:10px}
+.driver-title{display:flex;align-items:center;gap:8px;background:var(--primary);color:#fff;font-weight:700;font-size:12.5px;border-radius:10px;padding:10px 13px;height:100%}
+.driver-arrow{color:var(--primary);font-size:18px;text-align:center;font-weight:700}
+.driver-args{background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12.5px}
+.driver-args ul{margin:0 0 0 16px}
+.vc-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.vc-step{flex:1 1 190px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.vc-head{display:flex;align-items:center;gap:8px;padding:9px 12px;font-weight:700;font-size:12.5px}
+.vc-core{background:var(--primary);color:#fff}
+.vc-noncore{background:var(--primary-muted);color:var(--primary)}
+.vc-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.25);font-size:11px;font-weight:800;flex:none}
+.vc-noncore .vc-num{background:#fff}
+.vc-body{padding:9px 12px;font-size:12px}
+.vc-body ul{margin-left:15px}
+.vc-legend{display:flex;gap:16px;margin-top:6px}
+.quad-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.quad{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.quad-title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--primary);margin-bottom:7px}
+.quad ul{margin-left:16px;font-size:12.5px}
+.eco-row{display:flex;gap:16px;flex-wrap:wrap}
+.eco-col{flex:1 1 300px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.eco-title{font-weight:800;font-size:13px;color:var(--primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.eco-group{margin-bottom:10px}
+.eco-type{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.em-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.em-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12.5px}
+.em-name{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;margin-bottom:6px}
+.em-usecase{color:#374151}
+.mgmt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.mgmt-card p{font-size:12.5px;color:#374151}
+.mgmt-head{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.mgmt-name{font-weight:800;font-size:14.5px}
+.mgmt-role{font-size:12px;color:var(--muted)}
+.sources{margin:10px 0 4px;font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.sources-label{font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:10px}
+.source-item{font-size:11px}
+footer.app{border-top:1px solid var(--border);margin-top:28px;padding:14px 22px;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+footer.app img{height:16px;width:auto;opacity:.8}
+@media print{
+  header.app{position:static}
+  nav.tabs,.print-btn{display:none!important}
+  section.panel{display:block!important;page-break-before:always}
+  section.panel:first-of-type{page-break-before:auto}
+  section.panel>h2{display:block;font-size:16px;color:var(--primary);margin:0 0 12px;text-transform:uppercase;letter-spacing:.08em}
+  .card,.chart-card,.table-wrap,tr{break-inside:avoid}
+  main{max-width:none;padding:10px 0}
+}
+`;
+var buildJs = () => `
+(function(){
+  var tabs = Array.prototype.slice.call(document.querySelectorAll("nav.tabs button[data-tab]"));
+  var panels = Array.prototype.slice.call(document.querySelectorAll("section.panel[data-panel]"));
+  function activate(id){
+    tabs.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab") === id); });
+    panels.forEach(function(p){ p.classList.toggle("active", p.getAttribute("data-panel") === id); });
+    window.scrollTo({ top: 0 });
+  }
+  tabs.forEach(function(b){
+    b.addEventListener("click", function(){ activate(b.getAttribute("data-tab")); });
+  });
+  var printBtn = document.getElementById("print-btn");
+  if (printBtn) printBtn.addEventListener("click", function(){ window.print(); });
+})();
+`;
+async function renderTwoPagerHtml(input) {
+  const parsed = parseWebPayload(input.webPayload);
+  if (!parsed || typeof parsed !== "object") {
+    throw new Error("webPayload invalide : objet JSON (ou string JSON) attendu");
+  }
+  const derived = deriveExportData(parsed);
+  const include = (key) => !input.selectedSections || input.selectedSections.includes(key);
+  const images = createPdfImageResolver();
+  const generatedAt = input.generatedAt ?? /* @__PURE__ */ new Date();
+  const companyName = input.doc.name || "Two-pager";
+  const website = input.doc.website ?? null;
+  const linkedinUrl = input.companyLinkedinUrl ?? derived.companyLinkedinUrl;
+  const cites = createCiteCtx10();
+  const [brandLogoDataUrl, hydratedPresentation, hydratedMarket, hydratedCompetitors] = await Promise.all([
+    images.toDataUrl(input.brandLogo ?? derived.execSumLogoUrl),
+    derived.presentationContent && include("presentation") ? images.inlineContentForPdf(derived.presentationContent) : Promise.resolve(null),
+    derived.marketContent && include("market") ? images.inlineContentForPdf(derived.marketContent) : Promise.resolve(null),
+    derived.competitorsList?.length && include("competitors") ? images.prepareCompetitorsForPdf(derived.competitorsList) : Promise.resolve([])
+  ]);
+  const tabs = [];
+  const push = (id, label, html) => {
+    if (html.trim()) tabs.push({ id, label, html });
+  };
+  if (derived.dashboardData && include("dashboard")) {
+    push("dashboard", "Dashboard", renderDashboard(derived.dashboardData, cites));
+  }
+  if (hydratedPresentation) {
+    push("presentation", "Pr\xE9sentation", renderPresentation(hydratedPresentation, cites));
+  }
+  if ((derived.actionnariatData?.actions?.length || derived.actionnariatData?.ops?.length || derived.actionnariatData?.advisors?.length) && include("actionnariat")) {
+    push("actionnariat", "Actionnariat", renderActionnariat(derived.actionnariatData, cites));
+  }
+  if (derived.management?.length && include("management")) {
+    push("management", "Management", renderManagement(derived.management, cites));
+  }
+  if (hydratedMarket) {
+    push("market", "March\xE9", renderMarket(hydratedMarket, cites));
+  }
+  if (hydratedCompetitors?.length) {
+    push("competitors", "Concurrents", renderCompetitors(hydratedCompetitors, cites));
+  }
+  if (derived.insightsContent && include("insights")) {
+    push("insights", "Insights", renderInsights(derived.insightsContent, cites));
+  }
+  if (derived.notesReports?.length && include("notes")) {
+    push("notes", "Notes", renderNotes(derived.notesReports));
+  }
+  if (derived.dealsList?.length && include("deals")) {
+    push("deals", "Deals", renderDeals(derived.dealsList, cites));
+  }
+  if (derived.articlesList?.length && include("articles")) {
+    push("press", "Press", renderArticles(derived.articlesList, cites));
+  }
+  if (!tabs.length) {
+    throw new Error(
+      "Aucune section exploitable dans le webPayload (toutes vides ou absentes) \u2014 rien \xE0 rendre"
+    );
+  }
+  const naviiaLogo = `data:image/png;base64,${NAVIIA_LOGO_PNG_BASE64}`;
+  const brandLogoImg = safeImgSrc(brandLogoDataUrl) ? `<img class="comp-logo" src="${safeImgSrc(brandLogoDataUrl)}" alt="${esc(companyName)}">` : "";
+  const websiteHref = safeHref(website);
+  const linkedinHref = safeHref(linkedinUrl);
+  const dateStr = generatedAt.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
+  const navHtml = `<nav class="tabs">${tabs.map(
+    (t, i) => `<button type="button" data-tab="${t.id}"${i === 0 ? ' class="active"' : ""}>${esc(t.label)}</button>`
+  ).join("")}</nav>`;
+  const mainHtml = `<main>${tabs.map(
+    (t, i) => `<section class="panel${i === 0 ? " active" : ""}" data-panel="${t.id}"><h2>${esc(t.label)}</h2>${t.html}</section>`
+  ).join("")}</main>`;
+  return `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(companyName)} \u2014 Two-pager Naviia</title>
+<style>${buildCss()}</style>
+</head>
+<body>
+<header class="app">
+  <img class="naviia-logo" src="${naviiaLogo}" alt="Naviia">
+  <span class="sep"></span>
+  ${brandLogoImg}
+  <span class="company">${esc(companyName)}</span>
+  ${websiteHref ? `<a class="pill" href="${esc(websiteHref)}" target="_blank" rel="noopener">Site web</a>` : ""}
+  ${linkedinHref ? `<a class="pill" href="${esc(linkedinHref)}" target="_blank" rel="noopener">LinkedIn</a>` : ""}
+  <span class="spacer"></span>
+  <button type="button" id="print-btn" class="print-btn">Imprimer / PDF</button>
+</header>
+${navHtml}
+${mainHtml}
+<footer class="app">
+  <img src="${naviiaLogo}" alt="">
+  <span>G\xE9n\xE9r\xE9 par Naviia \u2014 ${esc(dateStr)}</span>
+</footer>
+<script>${buildJs()}</script>
+</body>
+</html>
+`;
+}
+
 // src/two-pager/render-cli.ts
 function fail(msg) {
   console.error(`ERREUR: ${msg}`);
   process.exit(1);
 }
 var args = process.argv.slice(2);
-var positional = args.filter((a) => !a.startsWith("--"));
-var docFlagIndex = args.indexOf("--doc");
+var positional = [];
+var docJson = null;
+var htmlPath = null;
+for (let i = 0; i < args.length; i += 1) {
+  const arg = args[i];
+  if (arg === "--doc") {
+    docJson = args[++i] ?? null;
+  } else if (arg === "--html") {
+    htmlPath = args[++i] ?? null;
+  } else if (!arg.startsWith("--")) {
+    positional.push(arg);
+  }
+}
 var [payloadPath, outPath] = positional;
 if (!payloadPath || !outPath) {
-  fail(`usage: render.mjs <web_payload.json> <out.pdf> --doc '{"name":...}'`);
+  fail(`usage: render.mjs <web_payload.json> <out.pdf> --doc '{"name":...}' [--html <out.html>]`);
 }
 var doc;
 try {
-  doc = docFlagIndex >= 0 ? JSON.parse(args[docFlagIndex + 1]) : { name: "two-pager" };
+  doc = docJson !== null ? JSON.parse(docJson) : { name: "two-pager" };
 } catch {
   fail("--doc doit \xEAtre un JSON valide");
 }
@@ -7750,13 +8865,20 @@ try {
 try {
   const result = await renderTwoPagerPdf({ doc, webPayload });
   writeFileSync(resolve(outPath), result.bytes);
+  let htmlOut = null;
+  if (htmlPath) {
+    const html = await renderTwoPagerHtml({ doc, webPayload });
+    htmlOut = resolve(htmlPath);
+    writeFileSync(htmlOut, html, "utf8");
+  }
   console.log(
     JSON.stringify({
       ok: true,
       out: resolve(outPath),
       filename: result.filename,
       sizeKb: Math.round(result.bytes.length / 1024),
-      sections: result.sectionStats
+      sections: result.sectionStats,
+      ...htmlOut ? { html: htmlOut } : {}
     })
   );
 } catch (e) {

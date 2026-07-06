@@ -29,6 +29,14 @@ teaser ou IM joint à la conversation, commentaires de focus.
 
 Crée un dossier de travail `work/` avec `work/steps/` et `work/sections/`.
 
+**Reprise après interruption** : si `work/` existe déjà pour cette société,
+NE PAS repartir de zéro. Inventorier ce qui est déjà là : les fichiers de
+`work/steps/` sont des étapes terminées (leurs sorties sont réutilisables
+telles quelles), les fichiers de `work/sections/` qui passent
+`validate_section.py` sont des sections acquises. Reprendre le plan au premier
+step manquant, en respectant les `dependsOn`. Ne régénérer une étape existante
+que si l'utilisateur le demande explicitement.
+
 ## 2. Classification
 
 1. Appelle `prepare_two_pager` **sans** `classification`.
@@ -68,7 +76,10 @@ Règles d'orchestration :
 
 ## 4. Validation
 
-Pour chaque section produite :
+Un hook du plugin valide AUTOMATIQUEMENT chaque fichier écrit dans
+`work/sections/` (même script que ci-dessous) : une section invalide est
+bloquée à l'écriture avec les motifs — corrige et réécris. Tu peux aussi
+valider manuellement :
 
 ```bash
 python3 scripts/validate_section.py work/sections/<SectionKey>.json
@@ -90,12 +101,13 @@ produit directement dans l'espace de travail :
 
 ```bash
 cd <dossier de cette skill>/renderer && npm install --silent   # première fois uniquement
-node dist/render.mjs <chemin>/work/web_payload.json <chemin>/work/<Société>_two-pager.pdf \
+node dist/render.mjs <chemin>/work/web_payload.json <chemin>/<Société>_two-pager.pdf \
+  --html <chemin>/<Société>_two-pager.html \
   --doc '{"name":"<Société>","sector":["<secteur>"],"website":"<site>","iso_code":"<langue>"}'
 ```
 
-Le script imprime un JSON `{ok, out, sections}` — vérifie que les sections
-attendues sont à `true` et livre le fichier PDF produit.
+Le script imprime un JSON `{ok, out, html, sections}` — vérifie que les
+sections attendues sont à `true`.
 
 **Fallback serveur** — si `node`/`npm` sont indisponibles ou que l'installation
 échoue : appelle le tool `render_two_pager_pdf` avec
@@ -105,10 +117,24 @@ sections signalées et réessaie.
 
 ## 6. Livraison
 
-Message final : le lien de téléchargement, la variante utilisée
+Trois fichiers restent dans l'espace de travail, à présenter à l'utilisateur :
+
+1. `<Société>_two-pager.pdf` — le document de référence (mise en page Naviia) ;
+2. `<Société>_two-pager.html` — la version interactive locale (onglets,
+   graphiques, sources cliquables) : un fichier autonome, s'ouvre d'un
+   double-clic ;
+3. `work/web_payload.json` — la donnée structurée (permet de régénérer ou de
+   mettre à jour une section plus tard sans relancer toute la recherche).
+
+Message final : les chemins des trois fichiers, la variante utilisée
 (mainstream/niche, ±teaser), une ligne par section (état + points saillants),
 et la liste explicite des sections dégradées ou pauvres en sources s'il y en
 a. Pas de résumé du contenu au-delà.
+
+**Mise à jour ultérieure** : si l'utilisateur demande de rafraîchir une
+section, régénérer UNIQUEMENT cette section (sous-agent + validation),
+remplacer sa clé dans `work/web_payload.json`, ré-assembler et relancer le
+rendu — ne jamais relancer tout le pipeline.
 
 ## Cas limites
 
