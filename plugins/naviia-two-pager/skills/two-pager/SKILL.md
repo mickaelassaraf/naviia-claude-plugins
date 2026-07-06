@@ -20,6 +20,14 @@ l'orchestration disciplinée, la recherche, et l'isolation des contextes.
 Requis : **nom de la société**. Souhaités : site web, secteur, langue (fr/en),
 teaser ou IM joint à la conversation, commentaires de focus.
 
+**Formulaire garanti par hook** : un hook du plugin BLOQUE tout appel à
+`prepare_two_pager`/`prepare_qa` tant que le formulaire n'a pas été validé
+dans la session (message « [Formulaire … validé] »). Ne tente pas de le
+contourner : appelle le formulaire et attends. Échappatoire prévue : si
+l'utilisateur écrit « sans formulaire » avec ses paramètres, la voie est
+débloquée. Un hook de fin vérifie aussi qu'un run validé produit bien un
+livrable avant de s'arrêter.
+
 - Si le connecteur expose `open_two_pager_form` et que l'hôte affiche les MCP
   Apps (Desktop/Cowork/Code) : appelle-le et attends la validation du
   formulaire — elle arrive comme un message `[Formulaire two-pager validé]`.
