@@ -2,10 +2,7 @@
   "mcpServers": {
     "naviia-two-pager": {
       "type": "http",
-      "url": "https://naviia-qa-claude.fly.dev/mcp-app",
-      "headers": {
-        "Authorization": "Bearer c3de90b7e63f15c3ed015f2e77a0f5af140dd217795be932"
-      }
+      "url": "https://naviia-qa-claude.fly.dev/mcp-app"
     }
   }
 }

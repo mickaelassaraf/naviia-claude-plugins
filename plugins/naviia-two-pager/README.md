@@ -21,6 +21,15 @@ tool serveur `render_im_docx` (template Cambria), complété d'un HTML local
 modèle de la conversation — facturée sur l'abonnement Claude de l'utilisateur.
 Rien à héberger côté client.
 
+
+## Accès
+
+Le connecteur Naviia est protégé par **OAuth** : à la première session, Claude
+ouvre la page de connexion Naviia — entrez votre **email** et votre **code
+d'accès** (fournis par Naviia). La session se renouvelle ensuite
+automatiquement ; **aucun jeton n'est stocké dans ce plugin**. Pour révoquer
+ou ajouter un utilisateur, contactez Naviia.
+
 ## Installation
 
 ### Claude Code / Cowork (recommandé — sous-agents parallèles)
