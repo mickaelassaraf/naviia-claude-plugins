@@ -85,10 +85,11 @@ python3 scripts/assemble_payload.py work/sections/ work/web_payload.json
 ```
 
 **Rendu LOCAL (par défaut)** — le moteur de rendu Naviia est embarqué dans le
-plugin (`renderer/`), le PDF est produit directement dans l'espace de travail :
+dossier de cette skill (`renderer/`, à côté de ce SKILL.md), le PDF est
+produit directement dans l'espace de travail :
 
 ```bash
-cd <racine du plugin>/renderer && npm install --silent   # première fois uniquement
+cd <dossier de cette skill>/renderer && npm install --silent   # première fois uniquement
 node dist/render.mjs <chemin>/work/web_payload.json <chemin>/work/<Société>_two-pager.pdf \
   --doc '{"name":"<Société>","sector":["<secteur>"],"website":"<site>","iso_code":"<langue>"}'
 ```
