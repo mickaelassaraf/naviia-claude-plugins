@@ -52,6 +52,8 @@ mettre à jour que lorsque la mécanique change (rendu, formulaire, skill).
 
 ## Accès et révocation
 
-L'accès au connecteur est protégé par un jeton propre à chaque organisation,
-embarqué dans le plugin distribué. Naviia peut révoquer un jeton à tout
-moment sans impacter les autres clients.
+L'accès au connecteur est protégé par **OAuth** : à la première session,
+Claude ouvre la page de connexion Naviia (email + code d'accès fournis par
+Naviia), puis la session se renouvelle automatiquement. Aucun secret n'est
+embarqué dans le plugin. Naviia provisionne et révoque chaque utilisateur
+individuellement, sans impacter les autres.
