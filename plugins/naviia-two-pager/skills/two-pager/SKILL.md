@@ -51,8 +51,9 @@ que si l'utilisateur le demande explicitement.
 2. Exécute le prompt retourné (avec le teaser joint comme source si présent).
    Réponse stricte : `{"result":"mainstream"}` ou `{"result":"niche"}`.
 3. Annonce le résultat en une ligne, puis rappelle `prepare_two_pager` avec
-   `classification` renseignée. Tu reçois le plan : ~19 étapes avec
-   `dependsOn`, `webSearch`, `sectionKey`, `outputContract` et les prompts.
+   `classification` renseignée (sans `stepId`). Tu reçois le **plan compact** :
+   ~21 étapes avec `dependsOn`, `webSearch`, `sectionKey` — SANS les prompts
+   (le plan fait quelques centaines d'octets, pas 90 Ko).
 
 ## 3. Exécution du plan
 
@@ -60,9 +61,13 @@ Règles d'orchestration :
 
 - **Respecte `dependsOn`.** Les étapes dont toutes les dépendances sont
   satisfaites se lancent **en parallèle, chacune dans un sous-agent à contexte
-  isolé** (Task tool). Chaque sous-agent reçoit UNIQUEMENT : les prompts de son
-  étape, les sorties de ses dépendances (lues dans `work/steps/`), le teaser
-  joint si l'étape le requiert, et son `outputContract` s'il existe.
+  isolé** (Task tool).
+- **Charge les prompts à la demande, une étape à la fois.** Ne recharge JAMAIS
+  le plan entier avec ses prompts. Au moment d'exécuter une étape, appelle
+  `prepare_two_pager` avec le même contexte + `stepId="<id>"` : tu récupères
+  UNIQUEMENT les prompts remplis et l'`outputContract` de cette étape. C'est ce
+  que reçoit le sous-agent, avec en plus les sorties de ses dépendances (lues
+  dans `work/steps/`) et le teaser joint si l'étape le requiert.
 - **Substitution des placeholders** : avant de lancer une étape, remplace dans
   ses prompts les `{{PLACEHOLDERS}}` restants par les sorties des étapes
   correspondantes (`{{MARKET_DEFINITION}}`, `{{MARKET_SUMMARY}}`,
@@ -109,6 +114,8 @@ consécutifs → signale la section comme dégradée et continue.
 ```bash
 python3 scripts/assemble_payload.py work/sections/ work/web_payload.json
 ```
+
+**Rendu rapide en environnement contraint** (connexion lente, sandbox à timeout court) : préfixe la commande de rendu par `NAVIIA_SKIP_LOGO_FETCH=1 NAVIIA_IMG_TIMEOUT_MS=4000` — le moteur n'ira pas chercher les logos concurrents sur le réseau (souvent lents/404) et coupe court sur les images lourdes. Les logos déjà fournis dans le web_payload restent affichés.
 
 **Rendu LOCAL (par défaut)** — le moteur de rendu Naviia est embarqué dans le
 dossier de cette skill (`renderer/`, à côté de ce SKILL.md), le PDF est

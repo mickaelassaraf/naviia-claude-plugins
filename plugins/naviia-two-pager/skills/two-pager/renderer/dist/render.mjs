@@ -6645,9 +6645,11 @@ var FLAGS_DIR = path.join(
 var BRANDFETCH_ENABLED = process.env.BRANDFETCH_ENABLED === "1";
 var makeSafeFilename = (val) => val.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").toLowerCase();
 var MAX_IMAGE_FETCH_CONCURRENCY = 4;
-var IMAGE_FETCH_RETRIES = 3;
-var IMAGE_FETCH_BASE_DELAY_MS = 200;
-var IMAGE_FETCH_JITTER_MS = 80;
+var IMAGE_FETCH_TIMEOUT_MS = Number(process.env.NAVIIA_IMG_TIMEOUT_MS) || 5e3;
+var SKIP_LOGO_FETCH = process.env.NAVIIA_SKIP_LOGO_FETCH === "1";
+var IMAGE_FETCH_RETRIES = 2;
+var IMAGE_FETCH_BASE_DELAY_MS = 150;
+var IMAGE_FETCH_JITTER_MS = 60;
 var PDF_IMAGE_MAX_DIMENSION = 1200;
 var PDF_IMAGE_JPEG_QUALITY = 40;
 var IMAGE_KEY_NAMES = /* @__PURE__ */ new Set([
@@ -6751,7 +6753,9 @@ var createPdfImageResolver = () => {
     let lastContentType;
     for (let attempt = 1; attempt <= IMAGE_FETCH_RETRIES; attempt += 1) {
       try {
-        const res = await imageFetchLimiter(() => fetch(url));
+        const res = await imageFetchLimiter(
+          () => fetch(url, { signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS) })
+        );
         if (!res.ok) {
           lastStatus = res.status;
           lastError = new Error(`HTTP ${res.status}`);
@@ -6937,6 +6941,7 @@ var createPdfImageResolver = () => {
       return null;
     };
     const fetchLogoFromWebsite = async (domain) => {
+      if (SKIP_LOGO_FETCH) return null;
       const base = `https://${domain.replace(/^https?:\/\//i, "").replace(/\/.*$/, "")}`;
       const candidates = [
         `${base}/apple-touch-icon.png`,
@@ -6944,7 +6949,10 @@ var createPdfImageResolver = () => {
       ];
       try {
         const res = await imageFetchLimiter(
-          () => fetch(base, { signal: AbortSignal.timeout(8e3), redirect: "follow" })
+          () => fetch(base, {
+            signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS),
+            redirect: "follow"
+          })
         );
         if (res.ok) {
           const html = (await res.text()).slice(0, 5e5);
