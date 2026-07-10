@@ -48,7 +48,9 @@ que si l'utilisateur le demande explicitement.
 ## 2. Classification
 
 1. Appelle `prepare_two_pager` **sans** `classification`.
-2. Exécute le prompt retourné (avec le teaser joint comme source si présent).
+2. Exécute le prompt retourné dans un sous-agent **`naviia-classify`**
+   (Task, `subagent_type="naviia-classify"` — agent du plugin, modèle épinglé),
+   avec le teaser joint comme source si présent.
    Réponse stricte : `{"result":"mainstream"}` ou `{"result":"niche"}`.
 3. Annonce le résultat en une ligne, puis rappelle `prepare_two_pager` avec
    `classification` renseignée (sans `stepId`). Tu reçois le **plan compact** :
@@ -72,13 +74,15 @@ Règles d'orchestration :
   ses prompts les `{{PLACEHOLDERS}}` restants par les sorties des étapes
   correspondantes (`{{MARKET_DEFINITION}}`, `{{MARKET_SUMMARY}}`,
   `{{LINKEDIN_PROFILES}}`, `{{COMPETITORS_LIST}}`, etc.).
-- **Choix du modèle des sous-agents** (vitesse sans perte de qualité) :
-  la **classification** mainstream/niche se fait avec un modèle intermédiaire
-  (Sonnet) — jamais le plus petit : une erreur change toute la variante. Les
-  étapes de **pure mise en forme** (`market-reports-format`, formatage des
-  profils LinkedIn) utilisent le modèle le plus rapide (Haiku). Toutes les
-  étapes de recherche et de rédaction gardent le modèle par défaut de la
-  session — ne jamais les downgrader.
+- **Agents épinglés (modèles fixés par le plugin)** : chaque étape s'exécute
+  via un agent du plugin (`subagent_type` du Task tool), pour que le
+  comportement soit identique quel que soit le modèle de la session —
+  `naviia-classify` pour la classification, `naviia-format` pour la pure mise
+  en forme (`market-reports-format`, `linkedin-research`), **`naviia-step`
+  pour toutes les autres étapes** (recherche et rédaction). Un hook du plugin
+  REFUSE tout Task d'étape lancé avec un autre agent. Si l'environnement
+  refuse le modèle épinglé d'un agent (abonnement sans ce modèle), garde le
+  même `subagent_type` et ajoute le paramètre `model="sonnet"` au Task.
 - **Recherche web** : autorisée uniquement pour les étapes `webSearch: true`.
   Respecte les consignes de sources des prompts (sources spécialisées type
   cfnews.net, lesechos.fr, capitalfinance ; jamais Wikipedia/Pappers quand le

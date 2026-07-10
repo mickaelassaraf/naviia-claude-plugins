@@ -55,10 +55,11 @@ outputContract}`.
 
 Règles d'orchestration :
 
-- **UN SOUS-AGENT PAR SECTION, en parallèle** (Task tool). Chaque sous-agent
-  reçoit UNIQUEMENT : les prompts de son step (draft puis rewrite), l'IM
-  joint, et son `outputContract`. Rien d'autre — pas le plan complet, pas
-  les autres sections.
+- **UN SOUS-AGENT PAR SECTION, en parallèle** (Task tool,
+  `subagent_type="naviia-step"` — agent du plugin, modèle épinglé ; un hook
+  refuse tout autre agent). Chaque sous-agent reçoit UNIQUEMENT : les prompts
+  de son step (draft puis rewrite), l'IM joint, et son `outputContract`. Rien
+  d'autre — pas le plan complet, pas les autres sections.
 - Dans chaque sous-agent : exécuter le prompt **draft** sur l'IM, puis le
   prompt **rewrite** en substituant `{{SECTION_DRAFT}}` par le draft produit.
   Les autres placeholders (`{{LANGUAGE}}`, `{{SECTION_TITLE}}`) sont déjà

@@ -10,8 +10,15 @@ Three modes (argv[1]), all fed the hook event JSON on stdin:
            (exit 2) until the form flag is set, forcing the model to call
            open_two_pager_form / open_qa_form first (the host then renders
            the form — guaranteed by the host once the tool is called).
+  pretool-task (PreToolUse on Task) — DENIES a pipeline-step subagent launched
+           without one of the plugin's pinned agents (naviia-step /
+           naviia-classify / naviia-format): the models are fixed by the
+           plugin so runs behave identically whatever the client's session
+           model is.
   posttool (PostToolUse on render_*) — marks the run as delivered and
            consumes the form flag (next run requires a fresh validation).
+  posttool-bash (PostToolUse on Bash) — same, for the DEFAULT local render
+           path (node render.mjs), which never goes through a render_* tool.
   stop     (Stop) — if a validated run produced no deliverable, blocks the
            stop ONCE with instructions to resume from work/.
 
@@ -29,6 +36,9 @@ GATED_TOOLS = re.compile(r"prepare_two_pager|prepare_qa")
 RENDER_TOOLS = re.compile(r"render_two_pager_pdf|render_qa_docx|render_im_docx")
 FORM_VALIDATED = re.compile(r"\[Formulaire .{0,30}valid[ée]\]", re.I)
 OPT_OUT = re.compile(r"sans formulaire", re.I)
+# A Task prompt that references the pipeline's working files is a step run.
+STEP_TASK = re.compile(r"work(-im)?/(steps|sections)/")
+LOCAL_RENDER = re.compile(r"render\.mjs")
 
 
 def load(session: str) -> dict:
@@ -77,6 +87,25 @@ def main() -> int:
         )
         return 2
 
+    if mode == "pretool-task":
+        tool_input = event.get("tool_input") or {}
+        prompt = str(tool_input.get("prompt") or "")
+        agent = str(tool_input.get("subagent_type") or "")
+        if not STEP_TASK.search(prompt) or agent.startswith("naviia-"):
+            return 0
+        print(
+            "Étape Naviia lancée sans agent épinglé : relance ce Task avec "
+            'subagent_type="naviia-step" (recherche/rédaction), '
+            '"naviia-classify" (classification) ou "naviia-format" (pure mise '
+            "en forme). Les modèles de ces agents sont fixés par le plugin "
+            "pour que le résultat soit identique quel que soit le modèle de "
+            "la session. Si le modèle épinglé est indisponible sur cet "
+            "abonnement, garde le même subagent_type et ajoute le paramètre "
+            'model="sonnet".',
+            file=sys.stderr,
+        )
+        return 2
+
     if mode == "pretool-bash":
         command = str((event.get("tool_input") or {}).get("command") or "")
         # Checkpoints are the crash-recovery currency: deleting work*/ before a
@@ -98,6 +127,19 @@ def main() -> int:
         if RENDER_TOOLS.search(tool):
             state["delivered"] = True
             state["formValidated"] = False  # next run needs a fresh validation
+            save(session, state)
+        return 0
+
+    if mode == "posttool-bash":
+        command = str((event.get("tool_input") or {}).get("command") or "")
+        if not LOCAL_RENDER.search(command):
+            return 0
+        # render.mjs prints {"ok":true,...} on success; the response shape
+        # varies by host, so match the marker anywhere in the serialized blob.
+        blob = json.dumps(event.get("tool_response") or "", ensure_ascii=False)
+        if re.search(r'\\?"ok\\?"\s*:\s*true', blob):
+            state["delivered"] = True
+            state["formValidated"] = False
             save(session, state)
         return 0
 
