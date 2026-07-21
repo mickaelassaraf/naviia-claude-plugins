@@ -63,6 +63,12 @@ suffit pas → la catégorie fourre-tout de la taxonomie active (son code varie 
 `11_Divers`, `12_Divers` selon le template, `00_A_Trier` en custom — la repérer dans le JSON)
 + signaler dans le rapport.
 
+**Archives (.zip) au contenu classifiable** (le listing `extract.py` montre des documents —
+PDF, comptes, contrats…) : ne pas se contenter de classer le zip. Extraire l'archive dans un
+dossier du même nom (sans extension) à la racine de la dataroom (python3 + zipfile, stdlib),
+puis relancer le scan : les fichiers extraits arrivent en `new` et se classent
+individuellement. Le zip d'origine reste classé comme archive.
+
 ### 4. Classification
 
 - **Le contenu prime sur le nom/chemin** — méfiance : un fichier nommé "PAIE" peut être une
