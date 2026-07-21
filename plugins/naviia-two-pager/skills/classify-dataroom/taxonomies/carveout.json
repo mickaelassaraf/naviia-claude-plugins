@@ -1,0 +1,130 @@
+{
+  "01_Corporate": {
+    "label": "Corporate / Gouvernance",
+    "subcategories": [
+      {"code": "01.1", "label": "Statuts et modifications"},
+      {"code": "01.2", "label": "Kbis et immatriculations"},
+      {"code": "01.3", "label": "Organigramme juridique (pré et post carve-out)"},
+      {"code": "01.4", "label": "PV AG et décisions"},
+      {"code": "01.5", "label": "Pactes d'associés"},
+      {"code": "01.6", "label": "Rapports commissaires aux comptes"}
+    ]
+  },
+  "02_Perimetre_Carveout": {
+    "label": "Périmètre / Carve-out",
+    "subcategories": [
+      {"code": "02.1", "label": "Définition du périmètre cédé"},
+      {"code": "02.2", "label": "Actifs inclus et exclus"},
+      {"code": "02.3", "label": "Passifs transférés et retenus"},
+      {"code": "02.4", "label": "Contrats transférés vs résiliés"},
+      {"code": "02.5", "label": "Effectifs transférés (Article L1224-1)"},
+      {"code": "02.6", "label": "PI et licences transférées"},
+      {"code": "02.7", "label": "Interdépendances avec le groupe cédant"}
+    ]
+  },
+  "03_Financier": {
+    "label": "Financier / Comptes",
+    "subcategories": [
+      {"code": "03.1", "label": "Comptes annuels audités (entité cédée)"},
+      {"code": "03.2", "label": "Comptes pro forma carve-out"},
+      {"code": "03.3", "label": "Allocations de coûts groupe → entité"},
+      {"code": "03.4", "label": "Budget et business plan standalone"},
+      {"code": "03.5", "label": "Dette et financements"},
+      {"code": "03.6", "label": "BFR et trésorerie normative"},
+      {"code": "03.7", "label": "Capex et investissements"}
+    ]
+  },
+  "04_TSA_Separation": {
+    "label": "TSA / Plan de Séparation",
+    "subcategories": [
+      {"code": "04.1", "label": "Transitional Services Agreement (TSA)"},
+      {"code": "04.2", "label": "Plan de séparation IT et systèmes"},
+      {"code": "04.3", "label": "Migration des données"},
+      {"code": "04.4", "label": "Séparation des fonctions support (finance, RH, juridique)"},
+      {"code": "04.5", "label": "Coûts de séparation (one-off)"},
+      {"code": "04.6", "label": "Calendrier de séparation"},
+      {"code": "04.7", "label": "Risques de séparation identifiés"}
+    ]
+  },
+  "05_Fiscal": {
+    "label": "Fiscal",
+    "subcategories": [
+      {"code": "05.1", "label": "Liasses fiscales"},
+      {"code": "05.2", "label": "Intégration fiscale (entrée/sortie)"},
+      {"code": "05.3", "label": "Flux intra-groupe et prix de transfert"},
+      {"code": "05.4", "label": "TVA et déclarations"},
+      {"code": "05.5", "label": "Contrôles et contentieux fiscaux"}
+    ]
+  },
+  "06_Juridique_Contrats": {
+    "label": "Juridique / Contrats",
+    "subcategories": [
+      {"code": "06.1", "label": "Contrats clients (change of control clauses)"},
+      {"code": "06.2", "label": "Contrats fournisseurs clés"},
+      {"code": "06.3", "label": "Contrats intra-groupe à résilier/remplacer"},
+      {"code": "06.4", "label": "Baux immobiliers"},
+      {"code": "06.5", "label": "Assurances"},
+      {"code": "06.6", "label": "Litiges et contentieux"},
+      {"code": "06.7", "label": "PI, brevets et marques"}
+    ]
+  },
+  "07_Social_RH": {
+    "label": "Social / RH",
+    "subcategories": [
+      {"code": "07.1", "label": "Contrats de travail dirigeants et key people"},
+      {"code": "07.2", "label": "Liste des effectifs transférés"},
+      {"code": "07.3", "label": "Convention collective applicable"},
+      {"code": "07.4", "label": "Contentieux prud'homaux"},
+      {"code": "07.5", "label": "Avantages sociaux et intéressement"},
+      {"code": "07.6", "label": "Masse salariale périmètre cédé"},
+      {"code": "07.7", "label": "Information/consultation du CSE"}
+    ]
+  },
+  "08_Commercial": {
+    "label": "Commercial / Business",
+    "subcategories": [
+      {"code": "08.1", "label": "Présentation activité"},
+      {"code": "08.2", "label": "Top clients et concentration"},
+      {"code": "08.3", "label": "Pipeline et carnet de commandes"},
+      {"code": "08.4", "label": "Non-compete et non-solicitation"}
+    ]
+  },
+  "09_IT_Systemes": {
+    "label": "IT / Systèmes",
+    "subcategories": [
+      {"code": "09.1", "label": "Architecture IT (partagée vs dédiée)"},
+      {"code": "09.2", "label": "Licences logiciels (transférables/à racheter)"},
+      {"code": "09.3", "label": "ERP et systèmes de gestion"},
+      {"code": "09.4", "label": "Cybersécurité"},
+      {"code": "09.5", "label": "RGPD et données personnelles"}
+    ]
+  },
+  "10_Environnement_Reglementaire": {
+    "label": "Environnement / Réglementaire / ESG",
+    "subcategories": [
+      {"code": "10.1", "label": "Autorisations et licences"},
+      {"code": "10.2", "label": "Audits environnementaux"},
+      {"code": "10.3", "label": "Certifications"},
+      {"code": "10.4", "label": "ESG et RSE"}
+    ]
+  },
+  "11_Transaction": {
+    "label": "Transaction / M&A Process",
+    "subcategories": [
+      {"code": "11.1", "label": "LOI et lettre d'intention"},
+      {"code": "11.2", "label": "SPA et contrat de cession"},
+      {"code": "11.3", "label": "Due diligence reports (VDD/CDD)"},
+      {"code": "11.4", "label": "Information memorandum et teaser"},
+      {"code": "11.5", "label": "Management presentation"},
+      {"code": "11.6", "label": "Q&A due diligence"},
+      {"code": "11.7", "label": "Garantie actif-passif (GAP)"},
+      {"code": "11.8", "label": "Closing documents"}
+    ]
+  },
+  "12_Divers": {
+    "label": "Divers / Non classé",
+    "subcategories": [
+      {"code": "12.1", "label": "Non classé"}
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "01_Corporate": {
+    "label": "Corporate / Gouvernance",
+    "subcategories": [
+      {"code": "01.1", "label": "Statuts et modifications"},
+      {"code": "01.2", "label": "Kbis et immatriculations"},
+      {"code": "01.3", "label": "Organigramme juridique"},
+      {"code": "01.4", "label": "PV AG et décisions"},
+      {"code": "01.5", "label": "Pactes d'associés et BSA/BSPCE"},
+      {"code": "01.6", "label": "Table de capitalisation"},
+      {"code": "01.7", "label": "Rapports commissaires aux comptes"},
+      {"code": "01.8", "label": "Management packages et stock-options"}
+    ]
+  },
+  "02_Financier": {
+    "label": "Financier / Comptes",
+    "subcategories": [
+      {"code": "02.1", "label": "Comptes annuels audités"},
+      {"code": "02.2", "label": "Comptes intermédiaires et reporting"},
+      {"code": "02.3", "label": "Budget et business plan"},
+      {"code": "02.4", "label": "Dette et financements"},
+      {"code": "02.5", "label": "BFR et trésorerie"},
+      {"code": "02.6", "label": "Unit economics et KPIs"},
+      {"code": "02.7", "label": "Historique des levées de fonds"}
+    ]
+  },
+  "03_Fiscal": {
+    "label": "Fiscal",
+    "subcategories": [
+      {"code": "03.1", "label": "Liasses fiscales"},
+      {"code": "03.2", "label": "Contrôles et contentieux fiscaux"},
+      {"code": "03.3", "label": "TVA et déclarations"},
+      {"code": "03.4", "label": "CIR / CII / JEI"}
+    ]
+  },
+  "04_Juridique_Contrats": {
+    "label": "Juridique / Contrats",
+    "subcategories": [
+      {"code": "04.1", "label": "Contrats clients clés"},
+      {"code": "04.2", "label": "Contrats fournisseurs et partenaires"},
+      {"code": "04.3", "label": "Baux immobiliers"},
+      {"code": "04.4", "label": "Conditions générales (CGV/CGU)"},
+      {"code": "04.5", "label": "Assurances"},
+      {"code": "04.6", "label": "Litiges et contentieux"}
+    ]
+  },
+  "05_Social_RH": {
+    "label": "Social / RH / Talent",
+    "subcategories": [
+      {"code": "05.1", "label": "Contrats de travail dirigeants et key people"},
+      {"code": "05.2", "label": "Effectifs et organigramme"},
+      {"code": "05.3", "label": "Convention collective"},
+      {"code": "05.4", "label": "Contentieux prud'homaux"},
+      {"code": "05.5", "label": "Plans d'intéressement et BSPCE"},
+      {"code": "05.6", "label": "Masse salariale et turnover"},
+      {"code": "05.7", "label": "Recrutement et plan de staffing"}
+    ]
+  },
+  "06_Commercial": {
+    "label": "Commercial / Go-to-Market",
+    "subcategories": [
+      {"code": "06.1", "label": "Présentation activité et pitch deck"},
+      {"code": "06.2", "label": "Top clients et concentration"},
+      {"code": "06.3", "label": "Pipeline commercial et ARR/MRR"},
+      {"code": "06.4", "label": "Études de marché et TAM/SAM/SOM"},
+      {"code": "06.5", "label": "Stratégie pricing"},
+      {"code": "06.6", "label": "Churn et rétention"}
+    ]
+  },
+  "07_IT_Produit": {
+    "label": "IT / Produit / Tech",
+    "subcategories": [
+      {"code": "07.1", "label": "Architecture technique et stack"},
+      {"code": "07.2", "label": "Roadmap produit"},
+      {"code": "07.3", "label": "Documentation technique et API"},
+      {"code": "07.4", "label": "Cybersécurité et audits"},
+      {"code": "07.5", "label": "RGPD et données personnelles"},
+      {"code": "07.6", "label": "Scalabilité et infrastructure cloud"}
+    ]
+  },
+  "08_PI_Innovation": {
+    "label": "Propriété Intellectuelle / Innovation",
+    "subcategories": [
+      {"code": "08.1", "label": "Brevets et demandes de brevet"},
+      {"code": "08.2", "label": "Marques déposées"},
+      {"code": "08.3", "label": "Logiciels et droits d'auteur"},
+      {"code": "08.4", "label": "Accords de licence et R&D"},
+      {"code": "08.5", "label": "CIR et dossiers innovation"}
+    ]
+  },
+  "09_Reglementaire_ESG": {
+    "label": "Réglementaire / ESG",
+    "subcategories": [
+      {"code": "09.1", "label": "Autorisations et licences"},
+      {"code": "09.2", "label": "Certifications"},
+      {"code": "09.3", "label": "ESG et impact"}
+    ]
+  },
+  "10_Transaction": {
+    "label": "Transaction",
+    "subcategories": [
+      {"code": "10.1", "label": "Term sheet et LOI"},
+      {"code": "10.2", "label": "Pacte d'actionnaires projet"},
+      {"code": "10.3", "label": "Due diligence reports"},
+      {"code": "10.4", "label": "Information memorandum"},
+      {"code": "10.5", "label": "Management presentation"},
+      {"code": "10.6", "label": "Q&A investisseurs"}
+    ]
+  },
+  "11_Divers": {
+    "label": "Divers / Non classé",
+    "subcategories": [
+      {"code": "11.1", "label": "Non classé"}
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "01_Corporate": {
+    "label": "Corporate / Gouvernance",
+    "subcategories": [
+      {"code": "01.1", "label": "Statuts et modifications"},
+      {"code": "01.2", "label": "Kbis et immatriculations"},
+      {"code": "01.3", "label": "Organigramme juridique"},
+      {"code": "01.4", "label": "PV AG et décisions"},
+      {"code": "01.5", "label": "Pactes d'associés"},
+      {"code": "01.6", "label": "Délégations de pouvoir"},
+      {"code": "01.7", "label": "Rapports commissaires aux comptes"},
+      {"code": "01.8", "label": "Registre des mouvements de titres"}
+    ]
+  },
+  "02_Financier": {
+    "label": "Financier / Comptes",
+    "subcategories": [
+      {"code": "02.1", "label": "Comptes annuels audités"},
+      {"code": "02.2", "label": "Comptes intermédiaires et reporting"},
+      {"code": "02.3", "label": "Budget et business plan"},
+      {"code": "02.4", "label": "Dette et financements"},
+      {"code": "02.5", "label": "BFR et trésorerie"},
+      {"code": "02.6", "label": "Capex"}
+    ]
+  },
+  "03_Fiscal": {
+    "label": "Fiscal",
+    "subcategories": [
+      {"code": "03.1", "label": "Liasses fiscales"},
+      {"code": "03.2", "label": "Contrôles et contentieux fiscaux"},
+      {"code": "03.3", "label": "TVA et déclarations"},
+      {"code": "03.4", "label": "Prix de transfert"},
+      {"code": "03.5", "label": "CIR / CII"}
+    ]
+  },
+  "04_Juridique_Contrats": {
+    "label": "Juridique / Contrats",
+    "subcategories": [
+      {"code": "04.1", "label": "Contrats clients"},
+      {"code": "04.2", "label": "Contrats fournisseurs"},
+      {"code": "04.3", "label": "Baux immobiliers"},
+      {"code": "04.4", "label": "Contrats de prêt et financement"},
+      {"code": "04.5", "label": "Assurances"},
+      {"code": "04.6", "label": "Litiges et contentieux"},
+      {"code": "04.7", "label": "PI marques et brevets"}
+    ]
+  },
+  "05_Social_RH": {
+    "label": "Social / RH",
+    "subcategories": [
+      {"code": "05.1", "label": "Contrats de travail dirigeants"},
+      {"code": "05.2", "label": "Effectifs et organigramme"},
+      {"code": "05.3", "label": "Convention collective"},
+      {"code": "05.4", "label": "Contentieux prud'homaux"},
+      {"code": "05.5", "label": "Avantages sociaux et intéressement"},
+      {"code": "05.6", "label": "Masse salariale et paie"}
+    ]
+  },
+  "06_Commercial": {
+    "label": "Commercial / Business",
+    "subcategories": [
+      {"code": "06.1", "label": "Présentation activité"},
+      {"code": "06.2", "label": "Top clients"},
+      {"code": "06.3", "label": "Pipeline et carnet de commandes"},
+      {"code": "06.4", "label": "Études de marché"}
+    ]
+  },
+  "07_IT_Systemes": {
+    "label": "IT / Systèmes",
+    "subcategories": [
+      {"code": "07.1", "label": "Architecture et infra"},
+      {"code": "07.2", "label": "Licences logiciels"},
+      {"code": "07.3", "label": "Cybersécurité"},
+      {"code": "07.4", "label": "RGPD et données personnelles"}
+    ]
+  },
+  "08_Environnement_Reglementaire": {
+    "label": "Environnement / Réglementaire / ESG",
+    "subcategories": [
+      {"code": "08.1", "label": "Autorisations et licences"},
+      {"code": "08.2", "label": "Audits environnementaux"},
+      {"code": "08.3", "label": "Certifications (ISO, etc.)"},
+      {"code": "08.4", "label": "ESG et RSE"}
+    ]
+  },
+  "09_Transaction": {
+    "label": "Transaction / M&A Process",
+    "subcategories": [
+      {"code": "09.1", "label": "LOI et lettre d'intention"},
+      {"code": "09.2", "label": "SPA et contrat de cession"},
+      {"code": "09.3", "label": "Due diligence reports (VDD/CDD)"},
+      {"code": "09.4", "label": "Information memorandum et teaser"},
+      {"code": "09.5", "label": "Management presentation"},
+      {"code": "09.6", "label": "Q&A due diligence"},
+      {"code": "09.7", "label": "Closing documents"},
+      {"code": "09.8", "label": "Garantie actif-passif (GAP)"}
+    ]
+  },
+  "10_Divers": {
+    "label": "Divers / Non classé",
+    "subcategories": [
+      {"code": "10.1", "label": "Non classé"}
+    ]
+  }
+}

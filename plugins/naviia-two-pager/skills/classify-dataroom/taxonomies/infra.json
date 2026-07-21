@@ -1,0 +1,122 @@
+{
+  "01_Corporate": {
+    "label": "Corporate / Gouvernance",
+    "subcategories": [
+      {"code": "01.1", "label": "Statuts et modifications"},
+      {"code": "01.2", "label": "Kbis et immatriculations"},
+      {"code": "01.3", "label": "Organigramme juridique"},
+      {"code": "01.4", "label": "PV AG et décisions"},
+      {"code": "01.5", "label": "Pactes d'associés"},
+      {"code": "01.6", "label": "Délégations de pouvoir"},
+      {"code": "01.7", "label": "Rapports commissaires aux comptes"},
+      {"code": "01.8", "label": "Registre des mouvements de titres"}
+    ]
+  },
+  "02_Financier": {
+    "label": "Financier / Comptes",
+    "subcategories": [
+      {"code": "02.1", "label": "Comptes annuels audités"},
+      {"code": "02.2", "label": "Comptes intermédiaires et reporting"},
+      {"code": "02.3", "label": "Budget et business plan"},
+      {"code": "02.4", "label": "Dette et financements"},
+      {"code": "02.5", "label": "BFR et trésorerie"},
+      {"code": "02.6", "label": "Capex et plan d'investissement"},
+      {"code": "02.7", "label": "Modèle financier et projections long terme"}
+    ]
+  },
+  "03_Fiscal": {
+    "label": "Fiscal",
+    "subcategories": [
+      {"code": "03.1", "label": "Liasses fiscales"},
+      {"code": "03.2", "label": "Contrôles et contentieux fiscaux"},
+      {"code": "03.3", "label": "TVA et déclarations"},
+      {"code": "03.4", "label": "Prix de transfert"},
+      {"code": "03.5", "label": "Régimes fiscaux spéciaux (ZFU, exonérations)"}
+    ]
+  },
+  "04_Concessions_Contrats_Publics": {
+    "label": "Concessions / Contrats Publics",
+    "subcategories": [
+      {"code": "04.1", "label": "Contrats de concession et DSP"},
+      {"code": "04.2", "label": "Contrats de PPP et marchés publics"},
+      {"code": "04.3", "label": "Avenants et modifications contractuelles"},
+      {"code": "04.4", "label": "Rapports annuels du délégataire"},
+      {"code": "04.5", "label": "Pénalités et performance contractuelle"},
+      {"code": "04.6", "label": "Échéanciers et renouvellements"},
+      {"code": "04.7", "label": "Subventions et financements publics"}
+    ]
+  },
+  "05_Juridique_Contrats": {
+    "label": "Juridique / Contrats Privés",
+    "subcategories": [
+      {"code": "05.1", "label": "Contrats clients et usagers"},
+      {"code": "05.2", "label": "Contrats fournisseurs et sous-traitants"},
+      {"code": "05.3", "label": "Contrats de maintenance et exploitation"},
+      {"code": "05.4", "label": "Baux et conventions d'occupation"},
+      {"code": "05.5", "label": "Assurances (RC, dommages, exploitation)"},
+      {"code": "05.6", "label": "Litiges et contentieux"},
+      {"code": "05.7", "label": "Servitudes et droits de passage"}
+    ]
+  },
+  "06_Social_RH": {
+    "label": "Social / RH",
+    "subcategories": [
+      {"code": "06.1", "label": "Contrats de travail dirigeants"},
+      {"code": "06.2", "label": "Effectifs et organigramme"},
+      {"code": "06.3", "label": "Convention collective"},
+      {"code": "06.4", "label": "Contentieux prud'homaux"},
+      {"code": "06.5", "label": "Masse salariale et paie"},
+      {"code": "06.6", "label": "Habilitations et certifications personnel"}
+    ]
+  },
+  "07_Technique_Actifs": {
+    "label": "Technique / Actifs Physiques",
+    "subcategories": [
+      {"code": "07.1", "label": "Inventaire et état des actifs"},
+      {"code": "07.2", "label": "Plans et documentation technique"},
+      {"code": "07.3", "label": "Rapports d'inspection et diagnostics"},
+      {"code": "07.4", "label": "Programme de maintenance (préventive/curative)"},
+      {"code": "07.5", "label": "Capex historique et plan de renouvellement"},
+      {"code": "07.6", "label": "Études de capacité et dimensionnement"}
+    ]
+  },
+  "08_Environnement_Reglementaire": {
+    "label": "Environnement / Réglementaire / ESG",
+    "subcategories": [
+      {"code": "08.1", "label": "Autorisations ICPE et permis d'exploiter"},
+      {"code": "08.2", "label": "Études d'impact environnemental"},
+      {"code": "08.3", "label": "Audits environnementaux et pollutions"},
+      {"code": "08.4", "label": "Certifications (ISO 14001, ISO 45001)"},
+      {"code": "08.5", "label": "Conformité réglementaire sectorielle"},
+      {"code": "08.6", "label": "ESG et reporting extra-financier"},
+      {"code": "08.7", "label": "Plans de prévention des risques"}
+    ]
+  },
+  "09_IT_Systemes": {
+    "label": "IT / Systèmes / SCADA",
+    "subcategories": [
+      {"code": "09.1", "label": "Architecture IT et SCADA"},
+      {"code": "09.2", "label": "Cybersécurité (OIV/OSE)"},
+      {"code": "09.3", "label": "RGPD et données personnelles"},
+      {"code": "09.4", "label": "Licences logiciels"}
+    ]
+  },
+  "10_Transaction": {
+    "label": "Transaction / M&A Process",
+    "subcategories": [
+      {"code": "10.1", "label": "LOI et lettre d'intention"},
+      {"code": "10.2", "label": "SPA et contrat de cession"},
+      {"code": "10.3", "label": "Due diligence reports (VDD/CDD)"},
+      {"code": "10.4", "label": "Information memorandum et teaser"},
+      {"code": "10.5", "label": "Management presentation"},
+      {"code": "10.6", "label": "Q&A due diligence"},
+      {"code": "10.7", "label": "Modèle de valorisation"}
+    ]
+  },
+  "11_Divers": {
+    "label": "Divers / Non classé",
+    "subcategories": [
+      {"code": "11.1", "label": "Non classé"}
+    ]
+  }
+}

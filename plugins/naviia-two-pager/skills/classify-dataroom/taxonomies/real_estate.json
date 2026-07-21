@@ -1,0 +1,116 @@
+{
+  "01_Corporate": {
+    "label": "Corporate / Gouvernance",
+    "subcategories": [
+      {"code": "01.1", "label": "Statuts et modifications"},
+      {"code": "01.2", "label": "Kbis et immatriculations"},
+      {"code": "01.3", "label": "Organigramme juridique (SCI, SCPI, OPCI)"},
+      {"code": "01.4", "label": "PV AG et décisions"},
+      {"code": "01.5", "label": "Pactes d'associés"},
+      {"code": "01.6", "label": "Rapports commissaires aux comptes"}
+    ]
+  },
+  "02_Financier": {
+    "label": "Financier / Comptes",
+    "subcategories": [
+      {"code": "02.1", "label": "Comptes annuels audités"},
+      {"code": "02.2", "label": "Comptes intermédiaires et reporting"},
+      {"code": "02.3", "label": "Budget et business plan"},
+      {"code": "02.4", "label": "Dette et financements (prêts hypothécaires)"},
+      {"code": "02.5", "label": "Trésorerie et cash flow"},
+      {"code": "02.6", "label": "Valorisations et expertises indépendantes"},
+      {"code": "02.7", "label": "Loyers et revenus locatifs"}
+    ]
+  },
+  "03_Fiscal": {
+    "label": "Fiscal",
+    "subcategories": [
+      {"code": "03.1", "label": "Liasses fiscales"},
+      {"code": "03.2", "label": "Taxe foncière et taxe d'habitation"},
+      {"code": "03.3", "label": "TVA immobilière"},
+      {"code": "03.4", "label": "Plus-values et régimes fiscaux (Pinel, Malraux)"},
+      {"code": "03.5", "label": "Contrôles et contentieux fiscaux"}
+    ]
+  },
+  "04_Baux_Locatif": {
+    "label": "Baux / Locatif",
+    "subcategories": [
+      {"code": "04.1", "label": "Baux commerciaux"},
+      {"code": "04.2", "label": "Baux d'habitation"},
+      {"code": "04.3", "label": "Baux professionnels et mixtes"},
+      {"code": "04.4", "label": "Avenants et renouvellements"},
+      {"code": "04.5", "label": "États des lieux (entrée/sortie)"},
+      {"code": "04.6", "label": "Indexation et révision des loyers"},
+      {"code": "04.7", "label": "Contentieux locatifs et impayés"},
+      {"code": "04.8", "label": "État locatif (rent roll)"}
+    ]
+  },
+  "05_Technique_Actifs": {
+    "label": "Technique / Actifs Immobiliers",
+    "subcategories": [
+      {"code": "05.1", "label": "Diagnostics techniques obligatoires (DPE, amiante, plomb)"},
+      {"code": "05.2", "label": "Plans et surfaces (SHON, SHAB, utile)"},
+      {"code": "05.3", "label": "Rapports d'inspection et audits techniques"},
+      {"code": "05.4", "label": "Travaux réalisés et factures"},
+      {"code": "05.5", "label": "Programme de travaux et capex"},
+      {"code": "05.6", "label": "Contrats de maintenance et facility management"},
+      {"code": "05.7", "label": "Certificats de conformité"}
+    ]
+  },
+  "06_Urbanisme_Foncier": {
+    "label": "Urbanisme / Foncier",
+    "subcategories": [
+      {"code": "06.1", "label": "Titres de propriété et actes notariés"},
+      {"code": "06.2", "label": "Permis de construire et autorisations"},
+      {"code": "06.3", "label": "Certificats d'urbanisme"},
+      {"code": "06.4", "label": "Plan local d'urbanisme (PLU/PLUi)"},
+      {"code": "06.5", "label": "Servitudes et droits de passage"},
+      {"code": "06.6", "label": "Bornage et cadastre"},
+      {"code": "06.7", "label": "Copropriété (règlement, charges, PV AG)"}
+    ]
+  },
+  "07_Environnement": {
+    "label": "Environnement / ESG",
+    "subcategories": [
+      {"code": "07.1", "label": "Études de sol et pollution"},
+      {"code": "07.2", "label": "Audit énergétique et DPE collectif"},
+      {"code": "07.3", "label": "Certifications (HQE, BREEAM, LEED)"},
+      {"code": "07.4", "label": "Plan de performance énergétique"},
+      {"code": "07.5", "label": "Risques naturels et technologiques (ERNMT)"}
+    ]
+  },
+  "08_Juridique_Contrats": {
+    "label": "Juridique / Contrats",
+    "subcategories": [
+      {"code": "08.1", "label": "Contrats de gestion (property/asset management)"},
+      {"code": "08.2", "label": "Assurances (PNO, multirisque)"},
+      {"code": "08.3", "label": "Litiges et contentieux"},
+      {"code": "08.4", "label": "Contrats de commercialisation"}
+    ]
+  },
+  "09_Social_RH": {
+    "label": "Social / RH",
+    "subcategories": [
+      {"code": "09.1", "label": "Contrats de travail"},
+      {"code": "09.2", "label": "Effectifs et organigramme"},
+      {"code": "09.3", "label": "Masse salariale"}
+    ]
+  },
+  "10_Transaction": {
+    "label": "Transaction / M&A Process",
+    "subcategories": [
+      {"code": "10.1", "label": "LOI et lettre d'intention"},
+      {"code": "10.2", "label": "SPA et contrat de cession"},
+      {"code": "10.3", "label": "Due diligence reports"},
+      {"code": "10.4", "label": "Information memorandum"},
+      {"code": "10.5", "label": "Expertises et valorisations"},
+      {"code": "10.6", "label": "Q&A due diligence"}
+    ]
+  },
+  "11_Divers": {
+    "label": "Divers / Non classé",
+    "subcategories": [
+      {"code": "11.1", "label": "Non classé"}
+    ]
+  }
+}
