@@ -16,7 +16,7 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 
-SKIP_DIRS = {".dataroom", "_classified", "__MACOSX", "output"}
+SKIP_DIRS = {".dataroom", "_classified", "_classified_diff", "__MACOSX", "output"}
 
 ENTITY_COLORS = ["#4338CA", "#0E7490", "#B45309", "#15803D", "#BE185D", "#6B7280"]
 
@@ -46,7 +46,7 @@ def find_duplicates(dataroom: Path, files: dict) -> list:
         parts = Path(rel).parts
         if any(part in SKIP_DIRS or part.startswith(".") for part in parts[:-1]):
             continue
-        if p.name.startswith(".") or rel in known_paths:
+        if p.name.startswith(".") or rel in known_paths or parts[0].startswith("_classified"):
             continue
         h = file_hash(p)
         if h in known_hashes:

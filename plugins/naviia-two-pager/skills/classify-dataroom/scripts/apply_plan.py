@@ -206,9 +206,9 @@ def main():
                 continue
             rel = unicodedata.normalize("NFC", str(p.relative_to(dataroom)))
             parts = Path(rel).parts
-            if any(part.startswith(".") or part in {"_classified", "__MACOSX", "output"} for part in parts[:-1]):
+            if any(part.startswith(".") or part in {"_classified", "_classified_diff", "__MACOSX", "output"} for part in parts[:-1]):
                 continue
-            if p.name.startswith(".") or rel in known_paths:
+            if p.name.startswith(".") or rel in known_paths or parts[0].startswith("_classified"):
                 continue
             hash_on_disk.setdefault(file_hash(p), rel)
         for old_rel, entry in list(missing.items()):

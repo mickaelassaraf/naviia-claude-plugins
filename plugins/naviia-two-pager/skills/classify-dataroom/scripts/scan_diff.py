@@ -16,7 +16,7 @@ import sys
 import unicodedata
 from pathlib import Path
 
-SKIP_DIRS = {".dataroom", "_classified", "__MACOSX", "output"}
+SKIP_DIRS = {".dataroom", "_classified", "_classified_diff", "__MACOSX", "output"}
 SKIP_FILES = {".DS_Store", "Thumbs.db", "desktop.ini"}
 NON_CLASSIFIABLE = {".gif", ".zip", ".rar", ".7z"}
 
@@ -39,6 +39,9 @@ def scan(dataroom: Path) -> dict:
         if any(part in SKIP_DIRS or part.startswith(".") for part in rel.parts[:-1]):
             continue
         if p.name in SKIP_FILES or p.name.startswith("."):
+            continue
+        # never classify our own deliverables (e.g. _classified_diff.zip made by the user)
+        if rel.parts[0].startswith("_classified"):
             continue
         size = p.stat().st_size
         # NFC canonical form: macOS filesystems return NFD, manifest keys are NFC
