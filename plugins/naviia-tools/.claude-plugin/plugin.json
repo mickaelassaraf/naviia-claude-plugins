@@ -1,0 +1,8 @@
+{
+  "name": "naviia-tools",
+  "version": "0.7.0",
+  "description": "Outils Naviia : two-pager (profil d'entreprise PE, PDF Naviia), analyse d'IM (sections en sous-agents depuis l'IM joint, DOCX Cambria) via le connecteur MCP Naviia, et classify-dataroom (classement de dataroom locale avec index, rapport HTML, diff et incrémental).",
+  "author": {
+    "name": "Naviia"
+  }
+}

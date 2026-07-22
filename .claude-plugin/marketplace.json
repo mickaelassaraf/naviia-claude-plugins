@@ -5,9 +5,9 @@
   },
   "plugins": [
     {
-      "name": "naviia-two-pager",
-      "source": "./plugins/naviia-two-pager",
-      "description": "Two-pager Naviia : profil d'entreprise PE avec rendu PDF identique au portail."
+      "name": "naviia-tools",
+      "source": "./plugins/naviia-tools",
+      "description": "Outils Naviia : two-pager PE, analyse d'IM et classification de dataroom."
     }
   ]
 }

@@ -16,7 +16,7 @@ Dans Cowork ou Claude Code :
 
 ```
 /plugin marketplace add mickaelassaraf/naviia-claude-plugins
-/plugin install naviia-two-pager@naviia
+/plugin install naviia-tools@naviia
 ```
 
 Puis ouvrir une **nouvelle session**. Premier test : « Fais un two-pager sur
@@ -31,8 +31,8 @@ Pour mettre à jour :
 
 ```
 /plugin marketplace update naviia
-/plugin uninstall naviia-two-pager@naviia
-/plugin install naviia-two-pager@naviia
+/plugin uninstall naviia-tools@naviia
+/plugin install naviia-tools@naviia
 ```
 
 Puis nouvelle session. La version affichée dans `/plugin list` confirme que

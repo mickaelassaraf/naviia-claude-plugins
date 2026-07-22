@@ -1,5 +1,5 @@
 {
-  "name": "naviia-two-pager-renderer",
+  "name": "naviia-tools-renderer",
   "version": "0.2.0",
   "private": true,
   "description": "Rendu PDF Naviia du two-pager — s'exécute localement dans l'espace de travail Cowork.",

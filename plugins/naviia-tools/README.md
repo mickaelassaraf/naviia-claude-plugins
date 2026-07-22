@@ -36,7 +36,7 @@ ou ajouter un utilisateur, contactez Naviia.
 
 ```
 /plugin marketplace add <chemin ou repo du marketplace naviia>
-/plugin install naviia-two-pager@naviia
+/plugin install naviia-tools@naviia
 ```
 
 Le `.mcp.json` du plugin monte automatiquement le connecteur
