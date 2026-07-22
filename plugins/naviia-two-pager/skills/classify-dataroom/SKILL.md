@@ -118,6 +118,17 @@ render). Puis présenter en texte : fichiers classés par catégorie, doublons d
 renames/suppressions traités, fichiers douteux (illisibles, protégés, fourre-tout,
 classification incertaine) avec ta raison, gap analysis, et le chemin de `INDEX.md`.
 
+**Export du delta** (si l'utilisateur veut « la diff » / uploader seulement les nouveautés
+vers une VDR) :
+
+```bash
+python3 $S/export_diff.py --dataroom <dataroom>          # dernier run
+python3 $S/export_diff.py --dataroom <dataroom> --since 2026-07-22T00:00:00Z
+```
+
+→ `<dataroom>/_classified_diff/` : uniquement les documents du dernier run dans la même
+arborescence, + `DIFF.md` et `diff.csv`. Le dossier est écrasé à chaque export.
+
 ## Règles de stabilité (runs incrémentaux)
 
 - **Ne jamais réorganiser l'existant** : un run incrémental ne touche que le delta, même si
